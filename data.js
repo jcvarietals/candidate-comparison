@@ -245,6 +245,164 @@ const LTGOV_POSITIONS = {
   },
 };
 
+// ── Insurance Commissioner ─────────────────────────────────────────────────
+
+const INS_CANDIDATES = [
+  { id: "allen",      name: "Ben Allen",        title: "California State Senator (SD-24)",                    party: "Democrat",   lane: "Progressive",  pollingPct: 28, active: true },
+  { id: "bradford",   name: "Steven Bradford",  title: "Former CA State Senator & legislator",                party: "Democrat",   lane: "Moderate",     pollingPct: 22, active: true },
+  { id: "kim_jane",   name: "Jane Kim",         title: "Consumer advocate & former SF Supervisor",            party: "Democrat",   lane: "Progressive",  pollingPct: 18, active: true },
+  { id: "korsgaden",  name: "Stacy Korsgaden",  title: "Licensed insurance agent (40-yr industry veteran)",   party: "Republican", lane: "Conservative", pollingPct: 15, active: true },
+];
+
+const INS_ISSUES = [
+  { id: "ins_homeowner",     label: "Homeowner insurance crisis",          group: "Core Issues" },
+  { id: "ins_fair",          label: "FAIR Plan reform",                    group: "Core Issues" },
+  { id: "ins_wildfire",      label: "Wildfire risk & rate-setting",        group: "Core Issues" },
+  { id: "ins_climate",       label: "Climate & catastrophe modeling",      group: "Core Issues" },
+  { id: "ins_prop103",       label: "Prop 103 & rate regulation",          group: "Core Issues" },
+  { id: "ins_claims",        label: "Consumer protection & claims",        group: "Additional Issues" },
+  { id: "ins_auto",          label: "Auto insurance",                      group: "Additional Issues" },
+  { id: "ins_highriskareas", label: "Insurance in high-risk areas",        group: "Additional Issues" },
+  { id: "ins_carriers",      label: "Keeping insurers in CA",              group: "Additional Issues" },
+  { id: "ins_accountability", label: "Insurer accountability (State Farm)", group: "Additional Issues" },
+];
+
+const INS_CITATIONS = {
+  ic1: { source: "CalMatters",              title: "Who's running for insurance commissioner in CA's 2026 election?",              url: "https://calmatters.org/california-voter-guide-2026/insurance-commissioner/",                                                                                                                                                        date: "May 2026" },
+  ic2: { source: "KQED",                   title: "Who's Running for California Insurance Commissioner? 2026 Primary Guide",       url: "https://www.kqed.org/voterguide/california/insurance-commissioner",                                                                                                                                                             date: "May 2026" },
+  ic3: { source: "LAist",                  title: "California Insurance Commissioner: Who's running in the June 2 primary",        url: "https://laist.com/news/politics/voter-guides/2026-election-california-primary-insurance-commissioner",                                                                                                                           date: "May 2026" },
+  ic4: { source: "American Prospect",      title: "The Candidate Pitching Single-Payer—for Disaster Insurance",                    url: "https://prospect.org/2026/05/14/jane-kim-candidate-pitching-single-payer-disaster-insurance-california/",                                                                                                                        date: "May 2026" },
+  ic5: { source: "ABC10",                  title: "Insurance Commissioner candidates compare plans at forum",                       url: "https://www.abc10.com/article/entertainment/television/programs/to-the-point/insurance-commissioner-candidates-compare-plans-qualifications-at-forum/103-01666972-5673-478f-9ef5-dde918b41480",                               date: "April 2026" },
+  ic6: { source: "BeInsure",               title: "California insurance commissioner race tests wildfire coverage",                 url: "https://beinsure.com/news/california-insurance-commissioner-race-tests-wildfire-coverage/",                                                                                                                                       date: "May 2026" },
+  ic7: { source: "American Agents Alliance", title: "Who Will Fix California's Insurance Market? A Look at the 2026 Commissioner Race", url: "https://agentsalliance.com/the-2026-california-insurance-commissioner-race-candidates-and-key-policy-positions/",                                                                                                   date: "March 2026" },
+  ic8: { source: "CA Secretary of State",  title: "Insurance Commissioner Candidate Statements — Official Voter Guide",            url: "https://voterguide.sos.ca.gov/candidates/insurance-commissioner-candidate-statements.htm",                                                                                                                                       date: "2026" },
+  ic9: { source: "CalMatters",             title: "California's next insurance commissioner will have 'brutal' balancing act",     url: "https://calmatters.org/economy/2026/03/california-insurance-commissioner-job/",                                                                                                                                                  date: "March 2026" },
+};
+
+const INS_POSITIONS = {
+  allen: {
+    ins_homeowner:      { text: `Watched his district burn in the LA wildfires. Calls State Farm's 400 violations of claims law "grotesque malfeasance" and says the system is "broken." Would appoint a consumer advocate inside the Department of Insurance and ban commissioners from going to work in the industry afterward.`, citations: ["ic1","ic5"] },
+    ins_fair:           { text: `Supports transitioning FAIR Plan customers back to the private market by rewarding homeowners who retrofit and harden their properties. Would use grants and financing to help communities in highest-risk areas create defensible space over a five-year window.`, citations: ["ic2","ic5"] },
+    ins_wildfire:       { text: `Supports faster FAIR Plan reform and reducing reliance on it after disasters. Argues the commissioner may have more authority than commonly understood to factor bad insurer behavior into rate review proceedings.`, citations: ["ic1","ic5"] },
+    ins_climate:        { text: `Supports revealing insurers' fossil fuel investments and holding the fossil fuel industry accountable for climate-related risks. Endorsed by California Environmental Voters and Sierra Club. Supports use of forward-looking climate models in rate-setting.`, citations: ["ic1","ic3"] },
+    ins_prop103:        { text: `Would modernize the rate review process while keeping Prop 103's consumer protections intact. Supports streamlining reviews so legitimate rate changes move faster, without removing the public's right to intervene.`, citations: ["ic7","ic5"] },
+    ins_claims:         { text: `Has authored legislation penalizing unnecessary claims delays, forcing increased payouts on contents coverage after total loss, and giving policyholders more notice and reasons before being dropped. Endorsed by California Professional Firefighters.`, citations: ["ic1","ic5"] },
+    ins_auto:           { text: `Less specific on auto insurance reform; primary focus is on homeowner/wildfire crisis. General commitment to consumer protection across all insurance lines.`, citations: ["ic1"] },
+    ins_highriskareas:  { text: `Would use grants and financing to help retrofit and harden homes in the highest-risk areas over five years, making them more insurable in the private market rather than stranding them on the FAIR Plan.`, citations: ["ic2","ic5"] },
+    ins_carriers:       { text: `Supports modernizing the rate approval process to speed up legitimate filings, which he believes will help attract carriers back to the market. Wants to balance market access with strong consumer protections.`, citations: ["ic7","ic9"] },
+    ins_accountability: { text: `Called State Farm's 400 claims violations "grotesque malfeasance." Supports using those violations in rate review proceedings. Wants the Department of Insurance to publish transparency reports and have real enforcement teeth.`, citations: ["ic5","ic1"] },
+  },
+  bradford: {
+    ins_homeowner:      { text: `Views the market as being at a crossroads due to climate-related risks. Supports stabilizing the market through a public-private risk-sharing partnership that keeps insurers in the state rather than replacing them. Backed by Teamsters and building trades unions.`, citations: ["ic1","ic3"] },
+    ins_fair:           { text: `Supports FAIR Plan reform that incentivizes customers to return to the private market by making private coverage more available and affordable. Judges success by "faster approvals, more insurers, fewer FAIR Plan policies, and strong consumer protections."`, citations: ["ic2","ic7"] },
+    ins_wildfire:       { text: `Would link insurance availability and planning to land-use decisions — communities that build in high-risk areas should factor in insurance costs from the start. Supports a voluntary buyout program for homeowners in the highest-risk areas.`, citations: ["ic1","ic3"] },
+    ins_climate:        { text: `Acknowledges climate risks are real and drive higher premiums. Supports policies that stabilize the market and incentivize wildfire mitigation by homeowners and communities. Notes rising insurance costs stem from real risks and ignoring that would shrink consumer options.`, citations: ["ic2","ic7"] },
+    ins_prop103:        { text: `Supports working within existing Prop 103 authority while modernizing the Department of Insurance's operations. Notes the department has only 34 claims reviewers statewide — a serious capacity problem. Would modernize staffing and processes.`, citations: ["ic5","ic7"] },
+    ins_claims:         { text: `Supports tougher action on slow claims handling — all major candidates agree on this. Would modernize the Department of Insurance's operational capacity to handle the volume of claims after major disasters.`, citations: ["ic5","ic7"] },
+    ins_auto:           { text: `Less specific on auto insurance reform; primary focus is on property/wildfire insurance stabilization. General support for competitive, available, and affordable insurance across all lines.`, citations: ["ic7"] },
+    ins_highriskareas:  { text: `Would link insurance to land-use and planning decisions. Supports incentivizing wildfire mitigation so that homes in high-risk areas can maintain private coverage rather than being pushed onto the FAIR Plan.`, citations: ["ic1","ic3"] },
+    ins_carriers:       { text: `Would create a public-private partnership to share wildfire risk with insurers as a way to keep them writing policies in California. Risk-sharing is his primary tool for market stabilization.`, citations: ["ic1","ic3"] },
+    ins_accountability: { text: `Supports tougher claims oversight and accountability. Backs modernizing the Department of Insurance with more staff and faster operations so it can actually enforce the law at scale.`, citations: ["ic5","ic7"] },
+  },
+  kim_jane: {
+    ins_homeowner:      { text: `Proposes "Natural Disaster Insurance for All": a state-run fund that guarantees wildfire and flood coverage for all homeowners. Customers stay with their private insurer for normal coverage, but the state fund kicks in for disaster claims. Modeled on systems in France, Spain, and New Zealand.`, citations: ["ic1","ic4","ic6"] },
+    ins_fair:           { text: `Sees the FAIR Plan as a symptom of a broken private market, not the solution. Would transition its function into the Natural Disaster Insurance for All public fund, funded by a portion of all policyholders' premiums.`, citations: ["ic1","ic4"] },
+    ins_wildfire:       { text: `Argues the current market structure is the core problem. A state-run disaster fund removes wildfire losses from the private insurance equation, allowing private carriers to price ordinary risk without climate catastrophe embedded in every homeowner's premium.`, citations: ["ic4","ic6"] },
+    ins_climate:        { text: `Frames the insurance crisis as inseparable from the climate crisis. Supports holding fossil fuel companies accountable and requiring forward-looking climate models in rate-setting. Backed by SEIU and CTA.`, citations: ["ic4","ic2"] },
+    ins_prop103:        { text: `Agrees Prop 103 correctly identified the need for regulation, but believes the current system has too many loopholes that allowed insurers to raise rates or exit without delivering results. Would close those loopholes while supporting the public fund alternative.`, citations: ["ic2","ic4"] },
+    ins_claims:         { text: `Supports limits on insurer profits and executive compensation as conditions for rate approval. Would mandate a minimum loss ratio — insurers must pay out at least 65% of homeowner premiums in claims — to prevent profit extraction at policyholders' expense.`, citations: ["ic4","ic8"] },
+    ins_auto:           { text: `Would create a public option for auto insurance — the most expansive auto insurance proposal in the field. Frames auto insurance as a necessity, like utilities, that should have a publicly available alternative.`, citations: ["ic1","ic3"] },
+    ins_highriskareas:  { text: `The Natural Disaster Insurance for All fund would guarantee coverage regardless of location, solving the high-risk area problem structurally rather than pushing residents to retrofit or move.`, citations: ["ic4","ic6"] },
+    ins_carriers:       { text: `Less concerned with attracting private carriers back to the market than with replacing their catastrophe function with a public fund. Believes private carriers fleeing is a signal the current market structure doesn't work, not a reason to accommodate their terms.`, citations: ["ic4","ic6"] },
+    ins_accountability: { text: `Would mandate minimum loss ratios, cap executive pay, and limit profits. Holds insurer failure to pay claims — like State Farm's 400 violations — as proof that the current enforcement model is inadequate and the system needs structural change.`, citations: ["ic4","ic5"] },
+  },
+  korsgaden: {
+    ins_homeowner:      { text: `Argues California's insurance crisis is a direct result of government overreach, excessive regulation, and mismanagement — not climate change alone. Would restore a free and fair market through competition, faster rate approvals, and reduced regulatory friction. Endorsed by California Republican Party.`, citations: ["ic2","ic8"] },
+    ins_fair:           { text: `Would create a new business division at the Department of Insurance within the first 100 days to fast-track qualified new insurers into the market, reducing FAIR Plan dependence by adding private carriers rather than restructuring the plan itself.`, citations: ["ic1","ic2"] },
+    ins_wildfire:       { text: `Would implement an emergency fire reduction plan through county Fire Safe Councils: remove dead and stacked brush, expand grazing and mechanical thinning, fast-track logging and forest management. Sees prevention as the primary lever, not insurance market redesign.`, citations: ["ic2","ic5"] },
+    ins_climate:        { text: `Skeptical that climate regulation is the answer to the insurance crisis. Argues Prop 103's price controls — not climate change — have primarily driven carriers out of California. Supports market-based approaches over government-mandated climate modeling requirements.`, citations: ["ic2","ic5"] },
+    ins_prop103:        { text: `Says Prop 103's price controls have driven companies out of California. Calls for working within existing authority to streamline rate approvals and welcomes competition rather than redesigning the system. Would allow actuarially sound pricing to attract carriers back.`, citations: ["ic5","ic2"] },
+    ins_claims:         { text: `Would publish a consumer advocacy hub, crack down on fraud to reduce costs, and demand accountability from utilities and local governments that ignore basic safety. Supports tougher action on slow claims handling — a consensus position in the race.`, citations: ["ic1","ic5"] },
+    ins_auto:           { text: `Supports free-market competition to lower auto insurance costs. Would encourage new insurance products and new entrants in the auto market. Opposes a public auto insurance option.`, citations: ["ic8","ic7"] },
+    ins_highriskareas:  { text: `Would address high-risk area availability by attracting more carriers through faster rate approvals and less regulatory friction. Supports fire prevention and home hardening as ways to make high-risk areas more insurable.`, citations: ["ic2","ic5"] },
+    ins_carriers:       { text: `Carrier attraction is her primary policy lever: open a new business division to fast-track qualified insurers, streamline rate approvals to give carriers pricing certainty, and reduce the regulatory burden that drove major insurers out of the state.`, citations: ["ic1","ic2"] },
+    ins_accountability: { text: `Supports accountability for claims mishandling; would demand real accountability from utilities and local governments that ignore safety. Opposed to restructuring the market in ways that punish all carriers for bad actors.`, citations: ["ic5","ic8"] },
+  },
+};
+
+// ── Attorney General ───────────────────────────────────────────────────────
+
+const AG_CANDIDATES = [
+  { id: "bonta",  name: "Rob Bonta",       title: "Incumbent California Attorney General",                        party: "Democrat",   lane: "Progressive",  pollingPct: 52, active: true },
+  { id: "gates",  name: "Michael Gates",   title: "Former Huntington Beach City Attorney & DOJ official",         party: "Republican", lane: "Conservative", pollingPct: 30, active: true },
+  { id: "mikels", name: "Marjorie Mikels", title: "Attorney & justice advocate",                                   party: "Green",      lane: "Progressive",  pollingPct: 8,  active: true },
+];
+
+const AG_ISSUES = [
+  { id: "ag_trump",        label: "Trump resistance & federal lawsuits",  group: "Core Issues" },
+  { id: "ag_crime",        label: "Crime & public safety enforcement",    group: "Core Issues" },
+  { id: "ag_housing",      label: "Housing law enforcement",              group: "Core Issues" },
+  { id: "ag_guns",         label: "Gun control enforcement",              group: "Core Issues" },
+  { id: "ag_consumer",     label: "Consumer protection & antitrust",      group: "Core Issues" },
+  { id: "ag_immigration",  label: "Immigration enforcement",              group: "Additional Issues" },
+  { id: "ag_environment",  label: "Environmental enforcement",            group: "Additional Issues" },
+  { id: "ag_reproductive", label: "Reproductive rights protection",       group: "Additional Issues" },
+  { id: "ag_ai",           label: "AI, tech & surveillance",              group: "Additional Issues" },
+  { id: "ag_civil",        label: "Police accountability & civil rights", group: "Additional Issues" },
+];
+
+const AG_CITATIONS = {
+  ag1:  { source: "CalMatters",         title: "Who are the 2026 candidates for California attorney general?",            url: "https://calmatters.org/california-voter-guide-2026/attorney-general/",                                                                                                                                                                      date: "May 2026" },
+  ag2:  { source: "LAist",              title: "California Attorney General: Who's running in the June 2 primary",        url: "https://laist.com/news/politics/voter-guides/2026-election-california-primary-california-state-attorney",                                                                                                                                  date: "May 2026" },
+  ag3:  { source: "Press Democrat",     title: "Bonta's battles with Trump define attorney general race",                  url: "https://www.pressdemocrat.com/2026/05/05/california-attorney-general-election-bonta-gates/",                                                                                                                                               date: "May 2026" },
+  ag4:  { source: "Factually",          title: "California Attorney General Race 2026: Who's Running",                    url: "https://factually.co/fact-checks/politics/ca-attorney-general-2026-race-12a655",                                                                                                                                                          date: "May 2026" },
+  ag5:  { source: "Factually",          title: "Who Is Rob Bonta and What Is at Stake in His 2026 Re-Election",           url: "https://factually.co/fact-checks/politics/rob-bonta-california-attorney-general-profile-466935",                                                                                                                                         date: "May 2026" },
+  ag6:  { source: "California Courier", title: "Michael Gates Enters 2026 California Attorney General Race",              url: "https://californiacourier.news/2026/01/former-huntington-beach-city-attorney-michael-gates-enters-2026-california-attorney-general-race/",                                                                                               date: "January 2026" },
+  ag7:  { source: "California Globe",   title: "Michael Gates Launches AG Campaign",                                      url: "https://californiaglobe.com/?p=84900",                                                                                                                                                                                                    date: "January 2026" },
+  ag8:  { source: "Democracy Docket",   title: "Huntington Beach Attorney Appointed to DOJ Civil Rights Division",        url: "https://www.democracydocket.com/news-alerts/huntington-beach-attorney-behind-voter-id-law-defense-appointed-to-doj-civil-rights-division/",                                                                                              date: "2025" },
+  ag9:  { source: "BallotReady",        title: "Michael E. Gates — 2026 California Attorney General",                     url: "https://www.ballotready.org/people/michael-e-gates",                                                                                                                                                                                      date: "2026" },
+  ag10: { source: "SJV Sun",            title: "Former Huntington Beach City Attorney Michael Gates launches AG campaign", url: "https://sjvsun.com/news/politics/former-huntington-beach-city-attorney-michael-gates-launches-ag-campaign",                                                                                                                              date: "January 2026" },
+};
+
+const AG_POSITIONS = {
+  bonta: {
+    ag_trump:        { text: `Has filed or joined more than 70 lawsuits against the Trump administration — the defining feature of his tenure. Preserving federal funding and California's independence on environmental regulation, immigrant relief, and consumer protection. Views continuity as critical to ongoing litigation.`, citations: ["ag1","ag3","ag5"] },
+    ag_crime:        { text: `Points to record on fentanyl trafficking, gun trafficking, combating organized retail theft, and consumer protection enforcement. Critics say his federal litigation focus has come at the expense of traditional crime-fighting; Bonta disputes this and argues affordability enforcement is crime enforcement.`, citations: ["ag3","ag5"] },
+    ag_housing:      { text: `First term included enforcing housing construction laws passed in the early 2020s, including compelling recalcitrant cities to build new housing. Supports state housing mandates over local veto authority.`, citations: ["ag1","ag2"] },
+    ag_guns:         { text: `Promotes red-flag measures to drive down gun violence; enforces California's strict gun laws; endorsed by gun-safety groups. Has sued over ghost guns and assault weapon trafficking.`, citations: ["ag3","ag5"] },
+    ag_consumer:     { text: `Consumer and worker enforcement is a top priority: privacy settlements, actions against agricultural price coordination, $28.5M in grants to curb youth tobacco sales, and an open antitrust investigation into the proposed Paramount–Warner media merger.`, citations: ["ag5","ag3"] },
+    ag_immigration:  { text: `Strongly defends California's sanctuary law; has sued to protect Dreamers and immigrant communities from federal enforcement overreach. Leads coalition of state AGs resisting Trump immigration policies.`, citations: ["ag1","ag2","ag3"] },
+    ag_environment:  { text: `Enforces California's environmental laws; part of multi-state coalitions challenging federal rollbacks of EPA regulations. Endorsed by California Environmental Voters.`, citations: ["ag1","ag5"] },
+    ag_reproductive: { text: `Defends California's abortion access laws; has filed suits protecting out-of-state patients who come to California for care. Enforces state law shielding providers from other states' prosecutions.`, citations: ["ag1","ag5"] },
+    ag_ai:           { text: `Has antitrust investigation open into the Paramount–Warner merger — a proxy for scrutiny of media consolidation enabled by AI and tech. General support for privacy enforcement and data protection. Less specific on military AI and surveillance.`, citations: ["ag5"] },
+    ag_civil:        { text: `Comes from a civil rights background as a legislator. Enforces police accountability laws passed in the early 2020s; defends civilian oversight mechanisms. Has filed suits against local agencies for excessive force.`, citations: ["ag1","ag5"] },
+  },
+  gates: {
+    ag_trump:        { text: `Argues Bonta's 70+ lawsuits against Trump are a wrong-headed diversion from the AG's core job. Would end the lawsuit-as-resistance model and pursue cooperative federalism — working with the Trump DOJ rather than against it. Served as Trump's deputy assistant AG in the DOJ Civil Rights Division.`, citations: ["ag3","ag8","ag10"] },
+    ag_crime:        { text: `Law-and-order is his central pitch. Would focus enforcement on violent criminals, gangs, and repeat offenders. Criticizes Bonta for "lenient criminal justice policy." Would crack down on crime and demand accountability from homelessness programs.`, citations: ["ag6","ag9","ag10"] },
+    ag_housing:      { text: `Fought state housing mandates as Huntington Beach city attorney — including defying laws that would have compelled the city to build more affordable housing. Supports local autonomy in land-use and zoning decisions. Would not use the AG's office to enforce state housing mandates against cities.`, citations: ["ag2","ag6","ag9"] },
+    ag_guns:         { text: `Would defend Second Amendment rights of law-abiding Californians; focus gun enforcement on trafficking and violent crime, not on lawful gun owners. Endorsed by California Rifle and Pistol Association. Would push back on California's gun restrictions as unconstitutional overreach.`, citations: ["ag9","ag7"] },
+    ag_consumer:     { text: `Supports defending taxpayers by suing to recover lost funds and strengthening enforcement tools against government waste and fraud. Less focus on corporate antitrust or media consolidation enforcement. Pro-business stance.`, citations: ["ag9","ag6"] },
+    ag_immigration:  { text: `Championed voter ID laws and opposed sanctuary policies as Huntington Beach city attorney. Worked to advance Trump's "America First" immigration agenda at the DOJ. Would pursue stronger enforcement of immigration laws at the state level, in cooperation with federal ICE.`, citations: ["ag8","ag6","ag7"] },
+    ag_environment:  { text: `Would protect coastal zones, wildlife habitats, water supplies, and high fire-risk areas from what he calls reckless or unlawful development — but primarily through local land-use authority rather than state environmental regulation. Skeptical of expansive state environmental mandates.`, citations: ["ag9"] },
+    ag_reproductive: { text: `Less specific; aligned with California Republican Party which generally opposes state-funded abortion expansion. Would not prioritize AG resources to protect abortion access or shield providers from out-of-state prosecutions.`, citations: ["ag7"] },
+    ag_ai:           { text: `Pro-business, anti-regulation stance implies opposition to aggressive AI antitrust or surveillance enforcement that could burden tech sector. No specific AI policy positions stated.`, citations: ["ag9"] },
+    ag_civil:        { text: `Worked in the DOJ Civil Rights Division under Trump — the division critics say was redirected away from traditional civil rights enforcement. Supports law enforcement and opposes what he sees as progressive-driven civilian oversight that undermines police.`, citations: ["ag8","ag6"] },
+  },
+  mikels: {
+    ag_trump:        { text: `Supports resisting federal overreach but frames the larger problem as a duopoly: both major parties are complicit in surveillance, military contracting, and corporate power. Wants to go further than Bonta on civil liberties and anti-war stances.`, citations: ["ag3","ag4"] },
+    ag_crime:        { text: `Approaches crime through a social justice and civil liberties lens. Opposes mass incarceration; supports decriminalization and community-based alternatives. Skeptical of punitive enforcement as a solution to systemic problems.`, citations: ["ag3","ag4"] },
+    ag_housing:      { text: `Supports strong state enforcement of housing laws to protect tenants and expand affordable housing. Opposes public-private surveillance deals between government and Silicon Valley companies that she sees as threats to housing and civil rights.`, citations: ["ag3","ag4"] },
+    ag_guns:         { text: `Supports strict gun control enforcement. Less central to her campaign than civil liberties and anti-war issues. General alignment with progressive gun safety positions.`, citations: ["ag4"] },
+    ag_consumer:     { text: `Focuses on corporate accountability broadly — including scrutinizing how California industry supports AI resource consumption and its links to military technology, and the clandestine role of state infrastructure, such as airports, in military supply chains.`, citations: ["ag3"] },
+    ag_immigration:  { text: `Strong immigrant rights stance; supports protecting sanctuary policies and pushing back hard on federal immigration enforcement. Frames immigration enforcement as a civil rights issue.`, citations: ["ag4"] },
+    ag_environment:  { text: `Supports aggressive environmental enforcement including cracking down on nuclear waste disposal in California. Views climate and environmental protection as inseparable from civil rights and community health.`, citations: ["ag3","ag4"] },
+    ag_reproductive: { text: `Strongly supports abortion access and reproductive rights. Would use the AG office aggressively to protect providers and patients from out-of-state prosecutions and federal interference.`, citations: ["ag4"] },
+    ag_ai:           { text: `Wants to scrutinize how California industry supports AI resource consumption and its links to military technology. Concerned about surveillance technology contracts between governments and Silicon Valley companies. Would investigate clandestine uses of state infrastructure in military and intelligence supply chains.`, citations: ["ag3"] },
+    ag_civil:        { text: `Top priority alongside anti-war stances. Supports robust free speech protections including for critics of the war in Gaza. Opposes public-private surveillance deals. Would use the AG's civil rights enforcement mandate aggressively against police misconduct.`, citations: ["ag3","ag4"] },
+  },
+};
+
 // ── Races registry ─────────────────────────────────────────────────────────
 
 export const RACES = {
@@ -265,5 +423,23 @@ export const RACES = {
     citations: LTGOV_CITATIONS,
     positions: LTGOV_POSITIONS,
     contextNote: `The California Lieutenant Governor has limited formal powers. Positions here are framed around the office's actual levers: UC Board of Regents, CSU Board of Trustees, Community College Board of Governors, State Lands Commission, Coastal Commission (non-voting), Senate tie-breaking vote, and acting governor when the governor leaves California. The office has a budget of ~$3 million.`,
+  },
+  inscomm: {
+    id: 'inscomm',
+    label: 'Ins. Commissioner',
+    candidates: INS_CANDIDATES,
+    issues: INS_ISSUES,
+    citations: INS_CITATIONS,
+    positions: INS_POSITIONS,
+    contextNote: `The California Department of Insurance is the largest consumer protection agency in California, regulating the largest property/casualty insurance market in the nation. The commissioner sets rates, licenses carriers, handles complaints, and oversees the FAIR Plan. Incumbent Ricardo Lara (D) is term-limited.`,
+  },
+  ag: {
+    id: 'ag',
+    label: 'Attorney General',
+    candidates: AG_CANDIDATES,
+    issues: AG_ISSUES,
+    citations: AG_CITATIONS,
+    positions: AG_POSITIONS,
+    contextNote: `The California Attorney General leads the Department of Justice's 5,000+ employees and serves as the state's chief law officer. The AG enforces state law, represents California in court, and issues legal opinions binding on state agencies. Incumbent Rob Bonta (D) seeks a second full term.`,
   },
 };

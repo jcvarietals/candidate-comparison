@@ -1,0 +1,707 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: #111827;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+
+header {
+  flex-shrink: 0;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 50;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ── Layout ── */
+
+.app-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Sidebar ── */
+
+.sidebar {
+  width: 264px;
+  min-width: 264px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.panel {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px;
+}
+
+.panel:last-child {
+  border-bottom: none;
+  flex: 1;
+}
+
+.panel-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.panel-hint {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ── Max warning ── */
+
+.max-warning {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #92400e;
+  margin-bottom: 10px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ── Candidate list ── */
+
+.candidate-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s;
+}
+
+.candidate-row:hover:not(.suspended) {
+  background: #f3f4f6;
+}
+
+.candidate-row.suspended {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.candidate-row input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #2563eb;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.candidate-row.suspended input[type="checkbox"] {
+  cursor: not-allowed;
+}
+
+.candidate-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.candidate-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cand-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.cand-title {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cand-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.polling-pct {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* ── Badges ── */
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 99px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.party-badge.republican  { background: #dc2626; color: white; }
+.party-badge.democrat    { background: #2563eb; color: white; }
+
+.lane-badge.conservative { background: #fef2f2; color: #b91c1c; }
+.lane-badge.progressive  { background: #f0fdfa; color: #0f766e; }
+.lane-badge.moderate     { background: #eff6ff; color: #1d4ed8; }
+.lane-badge.centrist     { background: #fffbeb; color: #b45309; }
+
+.suspended-badge {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ── Issue list ── */
+
+.issue-group-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin: 10px 6px 4px;
+}
+
+.issue-group-label:first-child {
+  margin-top: 0;
+}
+
+.issue-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.issue-row:hover {
+  background: #f3f4f6;
+}
+
+.issue-row input[type="checkbox"] {
+  flex-shrink: 0;
+  accent-color: #2563eb;
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.issue-row label {
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+
+/* ── Main content ── */
+
+.main-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ── Matrix wrapper ── */
+
+.matrix-wrapper {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 16px 0;
+}
+
+.matrix-empty {
+  padding: 48px 0;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ── Comparison table ── */
+
+.comparison-table {
+  border-collapse: collapse;
+  min-width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* Candidate header cells */
+.comparison-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+  border-bottom: 2px solid #e5e7eb;
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  min-width: 200px;
+  max-width: 240px;
+}
+
+/* Corner cell — sticky in both directions */
+.comparison-table thead th.corner-cell {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 25;
+  background: #f9fafb;
+  min-width: 140px;
+  max-width: 160px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.candidate-header-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cand-header-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.cand-header-title {
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1.3;
+}
+
+.cand-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* Issue label column — sticky left */
+.comparison-table tbody td.issue-label {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Body rows */
+.comparison-table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.comparison-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.comparison-table tbody tr:hover .issue-label {
+  background: #f3f4f6;
+}
+
+/* Position cells */
+.position-cell {
+  padding: 12px 14px;
+  vertical-align: top;
+  border-left: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background 0.12s;
+  position: relative;
+}
+
+.position-cell:hover {
+  background: #f0fdf4;
+}
+
+.position-cell.selected {
+  background: #f0fdf4;
+  outline: 2px solid #16a34a;
+  outline-offset: -2px;
+}
+
+.position-cell.no-data {
+  cursor: default;
+}
+
+.position-cell.no-data:hover {
+  background: transparent;
+}
+
+.cell-text {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #374151;
+  margin: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  background: #16a34a;
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.no-position {
+  font-size: 12px;
+  color: #d1d5db;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Citation superscripts */
+sup.cite {
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 1px;
+  text-decoration: none;
+  line-height: 0;
+}
+
+sup.cite:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* ── Citation popover ── */
+
+.citation-popover {
+  position: fixed;
+  z-index: 40;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  padding: 12px 14px;
+  max-width: 280px;
+  width: max-content;
+}
+
+.cite-source {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 3px;
+}
+
+.cite-title {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.45;
+  margin-bottom: 4px;
+}
+
+.cite-date {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+.cite-url {
+  display: block;
+  font-size: 11px;
+  color: #2563eb;
+  word-break: break-all;
+  text-decoration: none;
+}
+
+.cite-url:hover {
+  text-decoration: underline;
+}
+
+/* ── Score bar ── */
+
+.score-bar {
+  flex-shrink: 0;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  z-index: 30;
+  padding: 10px 16px;
+}
+
+.score-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.score-summary {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.score-cards {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.score-card {
+  flex-shrink: 0;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 110px;
+}
+
+.score-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.score-progress-track {
+  margin-top: 4px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.score-progress-fill {
+  height: 100%;
+  background: #16a34a;
+  border-radius: 99px;
+  transition: width 0.2s;
+}
+
+.score-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Buttons ── */
+
+.btn-primary {
+  padding: 7px 14px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s;
+  font-family: inherit;
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+}
+
+.btn-secondary {
+  padding: 7px 14px;
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s;
+  font-family: inherit;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+}
+
+.btn-ghost {
+  padding: 7px 14px;
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.1s;
+  font-family: inherit;
+}
+
+.btn-ghost:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* ── Results section ── */
+
+#results-container {
+  padding: 24px 16px 100px;
+}
+
+.results-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 24px;
+  max-width: 560px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.results-card h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.results-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 20px;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  border: 1px solid #f3f4f6;
+}
+
+.result-item.top-match {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.result-rank {
+  font-size: 11px;
+  font-weight: 600;
+  color: #16a34a;
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.result-rank.normal {
+  color: #9ca3af;
+}
+
+.result-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  flex: 1;
+}
+
+.result-score {
+  font-size: 13px;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.results-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+}

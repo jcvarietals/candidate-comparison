@@ -1,71 +1,103 @@
-import { CANDIDATES, ISSUES, CITATIONS, POSITIONS } from './data.js';
+import { RACES } from './data.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
 
 const state = {
+  race: 'governor',
   selectedCandidateIds: new Set(),
-  selectedIssueIds: new Set(ISSUES.map(i => i.id)),
-  picks: {}, // issueId -> candidateId
+  selectedIssueIds: new Set(),
+  picks: {},
 };
 
-// ── Helpers ────────────────────────────────────────────────────────────────
+// ── Race helpers ───────────────────────────────────────────────────────────
+
+function getRace() {
+  return RACES[state.race];
+}
+
+function allIssueIds() {
+  return getRace().issues.map(i => i.id);
+}
+
+// ── Candidate / issue helpers ──────────────────────────────────────────────
 
 function getSelectedCandidates() {
-  return CANDIDATES.filter(c => state.selectedCandidateIds.has(c.id));
+  return getRace().candidates.filter(c => state.selectedCandidateIds.has(c.id));
 }
 
 function getSelectedIssues() {
-  return ISSUES.filter(i => state.selectedIssueIds.has(i.id));
+  return getRace().issues.filter(i => state.selectedIssueIds.has(i.id));
 }
 
 function getActiveCandidateCount() {
   return [...state.selectedCandidateIds].filter(id => {
-    const c = CANDIDATES.find(x => x.id === id);
+    const c = getRace().candidates.find(x => x.id === id);
     return c && c.active;
   }).length;
 }
 
 function getPicksForCandidate(candidateId) {
-  const visibleIssueIds = getSelectedIssues().map(i => i.id);
-  return visibleIssueIds.filter(issueId => state.picks[issueId] === candidateId).length;
+  return getSelectedIssues().filter(i => state.picks[i.id] === candidateId).length;
 }
 
 function countPickedIssues() {
-  const visibleIssueIds = getSelectedIssues().map(i => i.id);
-  return visibleIssueIds.filter(id => state.picks[id] && state.selectedCandidateIds.has(state.picks[id])).length;
+  return getSelectedIssues().filter(i =>
+    state.picks[i.id] && state.selectedCandidateIds.has(state.picks[i.id])
+  ).length;
 }
 
 function allIssuesPicked() {
-  const visibleIssues = getSelectedIssues();
-  if (visibleIssues.length === 0) return false;
-  return visibleIssues.every(i => state.picks[i.id] && state.selectedCandidateIds.has(state.picks[i.id]));
+  const visible = getSelectedIssues();
+  return visible.length > 0 && visible.every(i =>
+    state.picks[i.id] && state.selectedCandidateIds.has(state.picks[i.id])
+  );
 }
 
-// ── Candidate Panel ────────────────────────────────────────────────────────
+// ── Race tabs ──────────────────────────────────────────────────────────────
+
+function renderRaceTabs() {
+  const html = Object.values(RACES).map(race => {
+    const count = race.candidates.filter(c => c.active).length;
+    const active = state.race === race.id;
+    return `
+      <button class="race-tab${active ? ' active' : ''}" data-race="${race.id}">
+        <span class="race-tab-name">${race.label}</span>
+        <span class="race-tab-meta">${count} candidates · June 2026</span>
+      </button>`;
+  }).join('');
+  document.getElementById('race-tabs').innerHTML = html;
+}
+
+// ── Context note ───────────────────────────────────────────────────────────
+
+function renderContextNote() {
+  const note = getRace().contextNote;
+  const el = document.getElementById('context-note');
+  if (note) {
+    el.textContent = note;
+    el.classList.remove('hidden');
+  } else {
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
+}
+
+// ── Candidate panel ────────────────────────────────────────────────────────
 
 function renderCandidatePanel() {
-  const activeCount = getActiveCandidateCount();
-  const atMax = activeCount >= 8;
+  const atMax = getActiveCandidateCount() >= 8;
+  document.getElementById('max-warning').classList.toggle('hidden', !atMax);
 
-  const warning = document.getElementById('max-warning');
-  warning.classList.toggle('hidden', !atMax);
-
-  const html = CANDIDATES.map(c => {
+  const html = getRace().candidates.map(c => {
     const checked = state.selectedCandidateIds.has(c.id);
     const suspended = !c.active;
     const disabled = suspended || (atMax && !checked);
     const partyClass = c.party.toLowerCase();
     const laneClass = c.lane.toLowerCase().replace(/ /g, '-');
-
     return `
       <label class="candidate-row${suspended ? ' suspended' : ''}" for="cand-${c.id}">
-        <input
-          type="checkbox"
-          id="cand-${c.id}"
-          data-candidate="${c.id}"
-          ${checked ? 'checked' : ''}
-          ${disabled ? 'disabled' : ''}
-        >
+        <input type="checkbox" id="cand-${c.id}" data-candidate="${c.id}"
+          ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
         <div class="candidate-info">
           <div class="candidate-name-row">
             <span class="cand-name">${c.name}</span>
@@ -78,38 +110,27 @@ function renderCandidatePanel() {
             ${c.pollingPct !== null ? `<span class="polling-pct">${c.pollingPct}%</span>` : ''}
           </div>
         </div>
-      </label>
-    `;
+      </label>`;
   }).join('');
 
   document.getElementById('candidate-list').innerHTML = html;
 }
 
-// ── Issue Panel ────────────────────────────────────────────────────────────
+// ── Issue panel ────────────────────────────────────────────────────────────
 
 function renderIssuePanel() {
-  const groups = [...new Set(ISSUES.map(i => i.group))];
-
+  const groups = [...new Set(getRace().issues.map(i => i.group))];
   const html = groups.map(group => {
-    const issues = ISSUES.filter(i => i.group === group);
-    const rows = issues.map(issue => {
-      const checked = state.selectedIssueIds.has(issue.id);
-      return `
+    const rows = getRace().issues
+      .filter(i => i.group === group)
+      .map(issue => `
         <label class="issue-row" for="issue-${issue.id}">
-          <input
-            type="checkbox"
-            id="issue-${issue.id}"
-            data-issue="${issue.id}"
-            ${checked ? 'checked' : ''}
-          >
+          <input type="checkbox" id="issue-${issue.id}" data-issue="${issue.id}"
+            ${state.selectedIssueIds.has(issue.id) ? 'checked' : ''}>
           <label for="issue-${issue.id}">${issue.label}</label>
-        </label>
-      `;
-    }).join('');
-
+        </label>`).join('');
     return `<div class="issue-group-label">${group}</div>${rows}`;
   }).join('');
-
   document.getElementById('issue-list').innerHTML = html;
 }
 
@@ -121,6 +142,14 @@ function buildCiteHtml(citations) {
   ).join('');
 }
 
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 function renderMatrix() {
   const candidates = getSelectedCandidates();
   const issues = getSelectedIssues();
@@ -130,62 +159,51 @@ function renderMatrix() {
     container.innerHTML = `<p class="matrix-empty">Select at least 2 candidates to compare.</p>`;
     return;
   }
-
   if (issues.length === 0) {
     container.innerHTML = `<p class="matrix-empty">Select at least one issue to compare.</p>`;
     return;
   }
 
-  let html = `<table class="comparison-table">
-    <thead>
-      <tr>
-        <th class="corner-cell">Issue</th>`;
+  let html = `<table class="comparison-table"><thead><tr><th class="corner-cell">Issue</th>`;
 
   for (const c of candidates) {
     const partyClass = c.party.toLowerCase();
     const laneClass = c.lane.toLowerCase().replace(/ /g, '-');
     html += `
-        <th>
-          <div class="candidate-header-inner">
-            <span class="cand-header-name">${c.name}</span>
-            <span class="cand-header-title">${c.title}</span>
-            <div class="cand-header-meta">
-              <span class="badge party-badge ${partyClass}">${c.party}</span>
-              <span class="badge lane-badge ${laneClass}">${c.lane}</span>
-              ${c.pollingPct !== null ? `<span class="polling-pct">${c.pollingPct}%</span>` : ''}
-            </div>
+      <th>
+        <div class="candidate-header-inner">
+          <span class="cand-header-name">${c.name}</span>
+          <span class="cand-header-title">${c.title}</span>
+          <div class="cand-header-meta">
+            <span class="badge party-badge ${partyClass}">${c.party}</span>
+            <span class="badge lane-badge ${laneClass}">${c.lane}</span>
+            ${c.pollingPct !== null ? `<span class="polling-pct">${c.pollingPct}%</span>` : ''}
           </div>
-        </th>`;
+        </div>
+      </th>`;
   }
 
-  html += `
-      </tr>
-    </thead>
-    <tbody>`;
+  html += `</tr></thead><tbody>`;
 
   for (const issue of issues) {
     html += `<tr><td class="issue-label">${issue.label}</td>`;
-
     for (const c of candidates) {
-      const pos = POSITIONS[c.id]?.[issue.id];
+      const pos = getRace().positions[c.id]?.[issue.id];
       const isPicked = state.picks[issue.id] === c.id;
-      const selectedClass = isPicked ? ' selected' : '';
-
+      const cls = `position-cell${isPicked ? ' selected' : ''}`;
       if (pos) {
-        const citeHtml = buildCiteHtml(pos.citations);
         html += `
-          <td class="position-cell${selectedClass}" data-issue="${issue.id}" data-candidate="${c.id}">
+          <td class="${cls}" data-issue="${issue.id}" data-candidate="${c.id}">
             ${isPicked ? '<span class="checkmark">✓</span>' : ''}
-            <p class="cell-text">${escapeHtml(pos.text)}${citeHtml}</p>
+            <p class="cell-text">${escapeHtml(pos.text)}${buildCiteHtml(pos.citations)}</p>
           </td>`;
       } else {
         html += `
-          <td class="position-cell no-data" data-issue="${issue.id}" data-candidate="${c.id}">
+          <td class="${cls} no-data" data-issue="${issue.id}" data-candidate="${c.id}">
             <p class="no-position">No data</p>
           </td>`;
       }
     }
-
     html += `</tr>`;
   }
 
@@ -193,24 +211,14 @@ function renderMatrix() {
   container.innerHTML = html;
 }
 
-function escapeHtml(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-// ── Score Bar ──────────────────────────────────────────────────────────────
+// ── Score bar ──────────────────────────────────────────────────────────────
 
 function renderScoreBar() {
   const candidates = getSelectedCandidates();
-  const visibleIssues = getSelectedIssues();
-  const totalIssues = visibleIssues.length;
+  const totalIssues = getSelectedIssues().length;
   const pickedCount = countPickedIssues();
-  const allPicked = allIssuesPicked();
 
-  let cardsHtml = candidates.map(c => {
+  const cardsHtml = candidates.map(c => {
     const picks = getPicksForCandidate(c.id);
     const pct = totalIssues > 0 ? Math.round((picks / totalIssues) * 100) : 0;
     const shortName = c.name.split(' ').pop();
@@ -223,7 +231,7 @@ function renderScoreBar() {
       </div>`;
   }).join('');
 
-  const actionsHtml = allPicked
+  const actionsHtml = allIssuesPicked()
     ? `<button id="see-results-btn" class="btn-primary">See my results</button>`
     : '';
 
@@ -239,33 +247,23 @@ function renderScoreBar() {
 
 function renderResults() {
   const container = document.getElementById('results-container');
-
-  if (!allIssuesPicked()) {
-    container.innerHTML = '';
-    return;
-  }
+  if (!allIssuesPicked()) { container.innerHTML = ''; return; }
 
   const candidates = getSelectedCandidates();
-  const visibleIssues = getSelectedIssues();
-
+  const total = getSelectedIssues().length;
   const ranked = candidates
     .map(c => ({ candidate: c, picks: getPicksForCandidate(c.id) }))
     .sort((a, b) => b.picks - a.picks);
 
   const topScore = ranked[0]?.picks ?? 0;
-  const total = visibleIssues.length;
+  const isTied = ranked.filter(r => r.picks === topScore).length > 1;
 
   const itemsHtml = ranked.map(({ candidate: c, picks }, idx) => {
     const isTop = picks === topScore;
-    const isTied = ranked.filter(r => r.picks === topScore).length > 1;
-    const rankLabel = isTop
-      ? (isTied ? 'Co-leader' : 'Your best match')
-      : `#${idx + 1}`;
-    const rankClass = isTop ? '' : ' normal';
-
+    const rankLabel = isTop ? (isTied ? 'Co-leader' : 'Your best match') : `#${idx + 1}`;
     return `
       <div class="result-item${isTop ? ' top-match' : ''}">
-        <span class="result-rank${rankClass}">${rankLabel}</span>
+        <span class="result-rank${isTop ? '' : ' normal'}">${rankLabel}</span>
         <span class="result-name">${c.name}</span>
         <span class="result-score">${picks} of ${total}</span>
       </div>`;
@@ -282,21 +280,19 @@ function renderResults() {
     </div>`;
 }
 
-// ── Citation Popover ───────────────────────────────────────────────────────
+// ── Citation popover ───────────────────────────────────────────────────────
 
 function showCitationPopover(citeId, triggerEl) {
-  const citation = CITATIONS[citeId];
+  const citation = getRace().citations[citeId];
   if (!citation) return;
 
   const popover = document.getElementById('citation-popover');
-
   popover.innerHTML = `
     <strong class="cite-source">${escapeHtml(citation.source)}</strong>
     <div class="cite-title">${escapeHtml(citation.title)}</div>
     <div class="cite-date">${escapeHtml(citation.date)}</div>
     <a class="cite-url" href="${citation.url}" target="_blank" rel="noopener noreferrer">Open source ↗</a>`;
 
-  // Measure before positioning
   popover.style.visibility = 'hidden';
   popover.classList.remove('hidden');
 
@@ -307,10 +303,7 @@ function showCitationPopover(citeId, triggerEl) {
   const vh = window.innerHeight;
 
   let top = rect.bottom + 8;
-  if (vh - rect.bottom < ph + 16) {
-    top = rect.top - ph - 8;
-  }
-
+  if (vh - rect.bottom < ph + 16) top = rect.top - ph - 8;
   let left = rect.left;
   if (left + pw > vw - 16) left = vw - pw - 16;
   if (left < 16) left = 16;
@@ -326,15 +319,13 @@ function dismissPopover() {
   popover.style.visibility = '';
 }
 
-// ── Score Card Popup ───────────────────────────────────────────────────────
+// ── Score card popup ───────────────────────────────────────────────────────
 
 function showScoreCardPopup(candidateId, triggerEl) {
-  const candidate = CANDIDATES.find(c => c.id === candidateId);
+  const candidate = getRace().candidates.find(c => c.id === candidateId);
   if (!candidate) return;
 
-  const visibleIssues = getSelectedIssues();
-  const pickedIssues = visibleIssues.filter(i => state.picks[i.id] === candidateId);
-
+  const pickedIssues = getSelectedIssues().filter(i => state.picks[i.id] === candidateId);
   const issueRows = pickedIssues.length
     ? pickedIssues.map(i => `
         <div class="score-popup-issue">
@@ -371,19 +362,90 @@ function dismissScoreCardPopup() {
   popup.style.visibility = '';
 }
 
-// ── Event Handlers ─────────────────────────────────────────────────────────
+// ── Header buttons ─────────────────────────────────────────────────────────
+
+function updateHeaderButtons() {
+  document.getElementById('reset-all-btn').disabled = Object.keys(state.picks).length === 0;
+}
+
+// ── URL state ──────────────────────────────────────────────────────────────
+
+function syncUrl() {
+  const params = new URLSearchParams();
+
+  if (state.race !== 'governor') params.set('race', state.race);
+
+  if (state.selectedCandidateIds.size > 0) {
+    params.set('c', [...state.selectedCandidateIds].join(','));
+  }
+
+  const allIds = allIssueIds();
+  if (state.selectedIssueIds.size < allIds.length) {
+    params.set('i', [...state.selectedIssueIds].join(','));
+  }
+
+  const pickEntries = Object.entries(state.picks).filter(([issueId, candidateId]) =>
+    state.selectedIssueIds.has(issueId) && state.selectedCandidateIds.has(candidateId)
+  );
+  if (pickEntries.length > 0) {
+    params.set('p', pickEntries.map(([i, c]) => `${i}:${c}`).join(','));
+  }
+
+  const query = params.toString();
+  history.replaceState(null, '', query ? `${location.pathname}?${query}` : location.pathname);
+}
+
+function loadFromUrl() {
+  const params = new URLSearchParams(location.search);
+
+  const race = params.get('race');
+  if (race && RACES[race]) state.race = race;
+
+  const validCandidateIds = getRace().candidates.filter(c => c.active).map(c => c.id);
+  const c = params.get('c');
+  if (c) {
+    const ids = c.split(',').filter(id => validCandidateIds.includes(id));
+    state.selectedCandidateIds = new Set(ids.slice(0, 8));
+  }
+
+  const allIds = allIssueIds();
+  const i = params.get('i');
+  state.selectedIssueIds = i
+    ? new Set(i.split(',').filter(id => allIds.includes(id)))
+    : new Set(allIds);
+
+  const p = params.get('p');
+  if (p) {
+    p.split(',').forEach(pair => {
+      const [issueId, candidateId] = pair.split(':');
+      if (issueId && candidateId) state.picks[issueId] = candidateId;
+    });
+  }
+}
+
+// ── Race switching ─────────────────────────────────────────────────────────
+
+function handleRaceSwitch(raceId) {
+  if (raceId === state.race) return;
+  state.race = raceId;
+  state.selectedCandidateIds = new Set();
+  state.selectedIssueIds = new Set(allIssueIds());
+  state.picks = {};
+  renderAll();
+  syncUrl();
+}
+
+// ── Handlers ───────────────────────────────────────────────────────────────
 
 function handleCandidateToggle(candidateId, checked) {
-  const candidate = CANDIDATES.find(c => c.id === candidateId);
+  const candidate = getRace().candidates.find(c => c.id === candidateId);
   if (!candidate || !candidate.active) return;
-
   if (checked) {
     if (getActiveCandidateCount() >= 8) return;
     state.selectedCandidateIds.add(candidateId);
   } else {
     state.selectedCandidateIds.delete(candidateId);
   }
-
   renderCandidatePanel();
   renderMatrix();
   renderScoreBar();
@@ -393,12 +455,8 @@ function handleCandidateToggle(candidateId, checked) {
 }
 
 function handleIssueToggle(issueId, checked) {
-  if (checked) {
-    state.selectedIssueIds.add(issueId);
-  } else {
-    state.selectedIssueIds.delete(issueId);
-  }
-
+  if (checked) state.selectedIssueIds.add(issueId);
+  else state.selectedIssueIds.delete(issueId);
   renderMatrix();
   renderScoreBar();
   renderResults();
@@ -407,15 +465,9 @@ function handleIssueToggle(issueId, checked) {
 }
 
 function handleCellClick(issueId, candidateId) {
-  const candidate = CANDIDATES.find(c => c.id === candidateId);
-  if (!candidate) return;
-
-  if (state.picks[issueId] === candidateId) {
-    delete state.picks[issueId];
-  } else {
-    state.picks[issueId] = candidateId;
-  }
-
+  if (!getRace().candidates.find(c => c.id === candidateId)) return;
+  if (state.picks[issueId] === candidateId) delete state.picks[issueId];
+  else state.picks[issueId] = candidateId;
   renderMatrix();
   renderScoreBar();
   renderResults();
@@ -423,9 +475,28 @@ function handleCellClick(issueId, candidateId) {
   syncUrl();
 }
 
-// ── Event Binding ──────────────────────────────────────────────────────────
+// ── Render all ─────────────────────────────────────────────────────────────
+
+function renderAll() {
+  renderRaceTabs();
+  renderContextNote();
+  renderCandidatePanel();
+  renderIssuePanel();
+  renderMatrix();
+  renderScoreBar();
+  renderResults();
+  updateHeaderButtons();
+}
+
+// ── Event binding ──────────────────────────────────────────────────────────
 
 function bindEvents() {
+  // Race tabs
+  document.getElementById('race-tabs').addEventListener('click', e => {
+    const tab = e.target.closest('.race-tab');
+    if (tab) handleRaceSwitch(tab.dataset.race);
+  });
+
   // Candidate checkboxes
   document.getElementById('candidate-list').addEventListener('change', e => {
     const cb = e.target;
@@ -455,11 +526,10 @@ function bindEvents() {
     }
   });
 
-  // Score bar: see results button + score card popup
+  // Score bar: see results + score card popup
   document.getElementById('score-bar').addEventListener('click', e => {
     if (e.target.id === 'see-results-btn') {
-      const results = document.getElementById('results-container');
-      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('results-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     const card = e.target.closest('.score-card');
@@ -475,7 +545,7 @@ function bindEvents() {
     }
   });
 
-  // Results: reset picks button (rendered dynamically)
+  // Results: reset picks
   document.getElementById('results-container').addEventListener('click', e => {
     if (e.target.id === 'reset-btn') {
       state.picks = {};
@@ -487,35 +557,7 @@ function bindEvents() {
     }
   });
 
-  // Dismiss popovers on outside click
-  document.addEventListener('click', e => {
-    const popover = document.getElementById('citation-popover');
-    if (
-      !popover.classList.contains('hidden') &&
-      !popover.contains(e.target) &&
-      !e.target.classList.contains('cite')
-    ) {
-      dismissPopover();
-    }
-
-    const scorePopup = document.getElementById('score-card-popup');
-    if (
-      !scorePopup.classList.contains('hidden') &&
-      !scorePopup.contains(e.target) &&
-      !e.target.closest('.score-card')
-    ) {
-      dismissScoreCardPopup();
-    }
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      dismissPopover();
-      dismissScoreCardPopup();
-    }
-  });
-
-  // Reset picks only (candidates stay selected)
+  // Reset all picks (header button)
   document.getElementById('reset-all-btn').addEventListener('click', () => {
     state.picks = {};
     renderMatrix();
@@ -525,7 +567,7 @@ function bindEvents() {
     syncUrl();
   });
 
-  // Share selections (copy link)
+  // Share selections
   document.getElementById('copy-link-btn').addEventListener('click', () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       const btn = document.getElementById('copy-link-btn');
@@ -534,78 +576,29 @@ function bindEvents() {
       setTimeout(() => { btn.textContent = orig; }, 2000);
     });
   });
-}
 
-// ── Header Buttons ─────────────────────────────────────────────────────────
+  // Dismiss popovers on outside click
+  document.addEventListener('click', e => {
+    const popover = document.getElementById('citation-popover');
+    if (!popover.classList.contains('hidden') && !popover.contains(e.target) && !e.target.classList.contains('cite')) {
+      dismissPopover();
+    }
+    const scorePopup = document.getElementById('score-card-popup');
+    if (!scorePopup.classList.contains('hidden') && !scorePopup.contains(e.target) && !e.target.closest('.score-card')) {
+      dismissScoreCardPopup();
+    }
+  });
 
-function updateHeaderButtons() {
-  const hasPicks = Object.keys(state.picks).length > 0;
-  document.getElementById('reset-all-btn').disabled = !hasPicks;
-}
-
-// ── URL State ──────────────────────────────────────────────────────────────
-
-const ALL_ISSUE_IDS = ISSUES.map(i => i.id);
-
-function syncUrl() {
-  const params = new URLSearchParams();
-
-  if (state.selectedCandidateIds.size > 0) {
-    params.set('c', [...state.selectedCandidateIds].join(','));
-  }
-
-  // Only encode issues if they differ from all-selected default
-  if (state.selectedIssueIds.size < ALL_ISSUE_IDS.length) {
-    params.set('i', [...state.selectedIssueIds].join(','));
-  }
-
-  const pickEntries = Object.entries(state.picks)
-    .filter(([issueId, candidateId]) =>
-      state.selectedIssueIds.has(issueId) && state.selectedCandidateIds.has(candidateId)
-    );
-  if (pickEntries.length > 0) {
-    params.set('p', pickEntries.map(([i, c]) => `${i}:${c}`).join(','));
-  }
-
-  const query = params.toString();
-  const newUrl = query ? `${location.pathname}?${query}` : location.pathname;
-  history.replaceState(null, '', newUrl);
-}
-
-function loadFromUrl() {
-  const params = new URLSearchParams(location.search);
-
-  const c = params.get('c');
-  if (c) {
-    const ids = c.split(',').filter(id => CANDIDATES.find(x => x.id === id && x.active));
-    state.selectedCandidateIds = new Set(ids.slice(0, 8));
-  }
-
-  const i = params.get('i');
-  if (i) {
-    const ids = i.split(',').filter(id => ALL_ISSUE_IDS.includes(id));
-    state.selectedIssueIds = new Set(ids);
-  }
-
-  const p = params.get('p');
-  if (p) {
-    p.split(',').forEach(pair => {
-      const [issueId, candidateId] = pair.split(':');
-      if (issueId && candidateId) state.picks[issueId] = candidateId;
-    });
-  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { dismissPopover(); dismissScoreCardPopup(); }
+  });
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────
 
 function init() {
   loadFromUrl();
-  renderCandidatePanel();
-  renderIssuePanel();
-  renderMatrix();
-  renderScoreBar();
-  renderResults();
-  updateHeaderButtons();
+  renderAll();
   bindEvents();
 }
 

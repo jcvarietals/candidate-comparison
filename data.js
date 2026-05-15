@@ -1,99 +1,19 @@
-export const CANDIDATES = [
-  {
-    id: "hilton",
-    name: "Steve Hilton",
-    title: "Former Fox News host & UK PM adviser",
-    party: "Republican",
-    lane: "Conservative",
-    pollingPct: 22,
-    active: true,
-  },
-  {
-    id: "bianco",
-    name: "Chad Bianco",
-    title: "Riverside County Sheriff",
-    party: "Republican",
-    lane: "Conservative",
-    pollingPct: 18,
-    active: true,
-  },
-  {
-    id: "steyer",
-    name: "Tom Steyer",
-    title: "Billionaire activist & former hedge fund manager",
-    party: "Democrat",
-    lane: "Progressive",
-    pollingPct: 16,
-    active: true,
-  },
-  {
-    id: "becerra",
-    name: "Xavier Becerra",
-    title: "Former U.S. HHS Secretary & CA Attorney General",
-    party: "Democrat",
-    lane: "Progressive",
-    pollingPct: 13,
-    active: true,
-  },
-  {
-    id: "porter",
-    name: "Katie Porter",
-    title: "Former U.S. Representative (CA-47)",
-    party: "Democrat",
-    lane: "Progressive",
-    pollingPct: 11,
-    active: true,
-  },
-  {
-    id: "mahan",
-    name: "Matt Mahan",
-    title: "Mayor, San José",
-    party: "Democrat",
-    lane: "Moderate",
-    pollingPct: 4,
-    active: true,
-  },
-  {
-    id: "villaraigosa",
-    name: "Antonio Villaraigosa",
-    title: "Former Mayor, Los Angeles",
-    party: "Democrat",
-    lane: "Centrist",
-    pollingPct: 3,
-    active: true,
-  },
-  {
-    id: "thurmond",
-    name: "Tony Thurmond",
-    title: "CA Superintendent of Public Instruction",
-    party: "Democrat",
-    lane: "Progressive",
-    pollingPct: 2,
-    active: true,
-  },
-  {
-    id: "swalwell",
-    name: "Eric Swalwell",
-    title: "Former U.S. Representative (CA-14)",
-    party: "Democrat",
-    lane: "Progressive",
-    pollingPct: null,
-    active: false,
-    suspendedLabel: "Suspended",
-  },
-  {
-    id: "yee",
-    name: "Betty Yee",
-    title: "Former CA State Controller",
-    party: "Democrat",
-    lane: "Progressive",
-    pollingPct: null,
-    active: false,
-    suspendedLabel: "Suspended",
-  },
+// ── Governor ───────────────────────────────────────────────────────────────
+
+const GOV_CANDIDATES = [
+  { id: "hilton",       name: "Steve Hilton",         title: "Former Fox News host & UK PM adviser",              party: "Republican", lane: "Conservative", pollingPct: 22, active: true },
+  { id: "bianco",       name: "Chad Bianco",           title: "Riverside County Sheriff",                          party: "Republican", lane: "Conservative", pollingPct: 18, active: true },
+  { id: "steyer",       name: "Tom Steyer",            title: "Billionaire activist & former hedge fund manager",  party: "Democrat",   lane: "Progressive",  pollingPct: 16, active: true },
+  { id: "becerra",      name: "Xavier Becerra",        title: "Former U.S. HHS Secretary & CA Attorney General",  party: "Democrat",   lane: "Progressive",  pollingPct: 13, active: true },
+  { id: "porter",       name: "Katie Porter",          title: "Former U.S. Representative (CA-47)",               party: "Democrat",   lane: "Progressive",  pollingPct: 11, active: true },
+  { id: "mahan",        name: "Matt Mahan",            title: "Mayor, San José",                                   party: "Democrat",   lane: "Moderate",     pollingPct: 4,  active: true },
+  { id: "villaraigosa", name: "Antonio Villaraigosa",  title: "Former Mayor, Los Angeles",                        party: "Democrat",   lane: "Centrist",     pollingPct: 3,  active: true },
+  { id: "thurmond",     name: "Tony Thurmond",         title: "CA Superintendent of Public Instruction",          party: "Democrat",   lane: "Progressive",  pollingPct: 2,  active: true },
+  { id: "swalwell",     name: "Eric Swalwell",         title: "Former U.S. Representative (CA-14)",               party: "Democrat",   lane: "Progressive",  pollingPct: null, active: false, suspendedLabel: "Suspended" },
+  { id: "yee",          name: "Betty Yee",             title: "Former CA State Controller",                       party: "Democrat",   lane: "Progressive",  pollingPct: null, active: false, suspendedLabel: "Suspended" },
 ];
 
-export const ISSUES = [
+const GOV_ISSUES = [
   { id: "housing",     label: "Housing",              group: "Core Issues" },
   { id: "homeless",    label: "Homelessness",         group: "Core Issues" },
   { id: "economy",     label: "Economy & taxes",      group: "Core Issues" },
@@ -107,7 +27,7 @@ export const ISSUES = [
   { id: "costliving",  label: "Cost of living",       group: "Additional Issues" },
 ];
 
-export const CITATIONS = {
+const GOV_CITATIONS = {
   c1:  { source: "CalMatters",      title: "Who are the 2026 California governor candidates?",          url: "https://calmatters.org/california-voter-guide-2026/governor/",                                                                          date: "May 2026" },
   c2:  { source: "KQED",            title: "Voter Guide: California Governor 2026",                      url: "https://www.kqed.org/voterguide/california/governor",                                                                                   date: "May 2026" },
   c3:  { source: "CalMatters",      title: "Governor YIMBY: Most candidates see eye-to-eye on housing",  url: "https://calmatters.org/politics/2026/05/california-governor-housing-2026-yimby/",                                                      date: "May 2026" },
@@ -125,7 +45,7 @@ export const CITATIONS = {
   c15: { source: "SB Independent",  title: "Steve Hilton campaigns in Santa Barbara",                     url: "https://www.independent.com/2026/03/04/republican-steve-hilton-campaigns-for-governor-in-santa-barbara-promotes-califordable-agenda/", date: "March 2026" },
 };
 
-export const POSITIONS = {
+const GOV_POSITIONS = {
   hilton: {
     housing:     { text: `Expand housing onto open land outside major cities ("sprawl = the California Dream"); cap housing taxes; strip regulations; cut red tape for faster permitting.`, citations: ["c1", "c11", "c13"] },
     homeless:    { text: `Dismantle "housing first" as a "complete disaster"; redirect all state funding to sober housing; clear encampments first, then triage; $24B in prior spending produced no results.`, citations: ["c4", "c13"] },
@@ -229,5 +149,121 @@ export const POSITIONS = {
     ai:          { text: `Less specific; no stated AI policy position.`, citations: ["c8"] },
     education:   { text: `Head of CA's $150B public school system; increase K–12 per-pupil funding; universal preschool for 4-year-olds; universal school meals; dyslexia screening; fully fund public schools.`, citations: ["c1", "c8"] },
     costliving:  { text: `Fund public programs via billionaire tax; address food and grocery costs; free school meals; universal preschool.`, citations: ["c7", "c8"] },
+  },
+};
+
+// ── Lieutenant Governor ────────────────────────────────────────────────────
+
+const LTGOV_CANDIDATES = [
+  { id: "fryday",   name: "Josh Fryday",    title: "CA Chief Service Officer & former Mayor of Novato",       party: "Democrat",   lane: "Progressive",  pollingPct: 28, active: true },
+  { id: "ma_fiona", name: "Fiona Ma",       title: "California State Treasurer",                              party: "Democrat",   lane: "Moderate",     pollingPct: 25, active: true },
+  { id: "tubbs",    name: "Michael Tubbs",  title: "Former Mayor of Stockton & poverty-policy advocate",      party: "Democrat",   lane: "Progressive",  pollingPct: 18, active: true },
+  { id: "romero",   name: "Gloria Romero",  title: "Former CA Senate Majority Leader (D-turned-R)",           party: "Republican", lane: "Conservative", pollingPct: 14, active: true },
+];
+
+const LTGOV_ISSUES = [
+  { id: "housing",     label: "Housing",              group: "Core Issues" },
+  { id: "homeless",    label: "Homelessness",         group: "Core Issues" },
+  { id: "economy",     label: "Economy & taxes",      group: "Core Issues" },
+  { id: "energy",      label: "Energy & climate",     group: "Core Issues" },
+  { id: "immigration", label: "Immigration & Trump",  group: "Core Issues" },
+  { id: "wildfire",    label: "Wildfire & insurance", group: "Additional Issues" },
+  { id: "budget",      label: "State budget deficit", group: "Additional Issues" },
+  { id: "healthcare",  label: "Healthcare",           group: "Additional Issues" },
+  { id: "ai",          label: "AI & tech policy",     group: "Additional Issues" },
+  { id: "education",   label: "Education",            group: "Additional Issues" },
+  { id: "costliving",  label: "Cost of living",       group: "Additional Issues" },
+];
+
+const LTGOV_CITATIONS = {
+  lg1:  { source: "CalMatters",           title: "Meet the candidates for California lieutenant governor",          url: "https://calmatters.org/politics/2026/04/california-lieutenant-governor-race/",                                                                            date: "April 2026" },
+  lg2:  { source: "Press Democrat",       title: "California lieutenant governor race tests power of state's No. 2 job", url: "https://www.pressdemocrat.com/2026/05/10/california-lieutenant-governor-candidates-election-2026/",                                              date: "May 2026" },
+  lg3:  { source: "GrowSF",              title: "Josh Fryday — Lt. Governor Candidate Questionnaire, June 2026",   url: "https://growsf.org/voter-guide/questionnaires/june-2026/josh-fryday/",                                                                                   date: "April 2026" },
+  lg4:  { source: "GrowSF",              title: "Fiona Ma — Lt. Governor Candidate Questionnaire, June 2026",      url: "https://growsf.org/voter-guide/questionnaires/june-2026/fiona-ma/",                                                                                      date: "April 2026" },
+  lg5:  { source: "Michael Tubbs campaign", title: "Issues — Michael Tubbs for Lt. Governor",                      url: "https://michaeltubbsforca.com/issues/",                                                                                                                   date: "2026" },
+  lg6:  { source: "Our Weekly",           title: "Lt. Governor candidate Michael Tubbs shares his vision",          url: "https://www.ourweekly.com/2026/04/24/lt-governor-candidate-michael-tubbs-shares-his-vision-for-california/",                                             date: "April 2026" },
+  lg7:  { source: "Gloria Romero campaign", title: "Gloria Romero for Lt. Governor — Platform",                    url: "https://www.gloriaromero4ltgov.com/",                                                                                                                     date: "2026" },
+  lg8:  { source: "CalMatters",           title: "Who are the 2026 California lieutenant governor candidates?",     url: "https://calmatters.org/california-voter-guide-2026/lieutenant-governor/",                                                                                 date: "May 2026" },
+  lg9:  { source: "KPBS",                title: "2026 Primary: California lieutenant governor race explainer",      url: "https://www.kpbs.org/news/politics/2026/05/04/2026-primary-election-california-lieutenant-governor-race-explainer",                                      date: "May 2026" },
+  lg10: { source: "Wikipedia",            title: "Josh Fryday — Wikipedia",                                        url: "https://en.wikipedia.org/wiki/Josh_Fryday",                                                                                                               date: "2026" },
+  lg11: { source: "Fiona Ma campaign",    title: "State Treasurer Fiona Ma Announces Candidacy for Lieutenant Governor", url: "https://fionama.com/news/state-treasurer-fiona-ma-officially-announces-candidacy-for-lieutenant-governor",                                        date: "May 2023" },
+  lg12: { source: "California Globe",     title: "Steve Hilton Selects Gloria Romero as Lt. Governor Running Mate", url: "https://californiaglobe.com/?p=84823",                                                                                                                   date: "January 2026" },
+};
+
+const LTGOV_POSITIONS = {
+  fryday: {
+    housing:     { text: `Views housing shortage as the root cause of nearly every California problem. Would use Lt. Gov. seats on UC and CSU boards to commit at least 1 million units on public and campus land. Supports cutting regulatory friction to build faster near transit and jobs.`, citations: ["lg3", "lg2"] },
+    homeless:    { text: `Frames homelessness as downstream of the housing shortage. Supports building more housing as the primary solution, particularly workforce and student housing on underused public land, rather than enforcement-first approaches.`, citations: ["lg3"] },
+    economy:     { text: `Cut regulatory friction for businesses; support clean-tech job growth; expand international trade partnerships. Supports a universal service year (ages 18–25) — incentivized with tuition credits, down-payment assistance, or job credentials — modeled on programs he built as Chief Service Officer.`, citations: ["lg3", "lg10"] },
+    energy:      { text: `Strong climate focus — previously COO of Tom Steyer's NextGen Climate advocacy nonprofit. Would use State Lands Commission to advance clean energy permitting, coastal land use, and drought-resilient water systems. Launched Climate Action Corps and College Corps under Newsom.`, citations: ["lg3", "lg10", "lg2"] },
+    immigration: { text: `Spoke out against Trump's National Guard deployment to Los Angeles as unnecessary and wasteful. Supports California's sanctuary policies; has not proposed specific Lt. Gov. immigration actions beyond general advocacy.`, citations: ["lg10"] },
+    wildfire:    { text: `Would use State Lands Commission to build climate resilience infrastructure and improve coastal land-use policy. Supports clean energy transition as long-term wildfire risk reduction; less specific on near-term fire prevention or insurance reform.`, citations: ["lg3", "lg2"] },
+    budget:      { text: `Focuses on revenue growth through housing development on public land, clean-tech jobs, and leveraging campus assets rather than proposing new taxes or cuts. Less specific on bridging the state's $35B structural deficit.`, citations: ["lg3"] },
+    healthcare:  { text: `Less specific in this race; general commitment to Californian wellbeing and equity. Background as Navy JAG and Newsom cabinet member; supports protecting public programs.`, citations: ["lg3"] },
+    ai:          { text: `Supports building California's clean-tech and innovation economy; no specific AI tax or regulation policy. Lt. Gov. role focused on higher ed boards where AI workforce training could be shaped.`, citations: ["lg3"] },
+    education:   { text: `Top priority: credential trade workers through community colleges to build clean energy projects. Push for more student housing on public/campus land. Use board seats to reduce time-to-degree, cut cost of attendance, and expand the College Corps service program to more schools.`, citations: ["lg1", "lg3", "lg9"] },
+    costliving:  { text: `Housing shortage is the root of California's cost-of-living crisis. Universal service year would give young Californians tuition credits and down-payment assistance. Clean energy buildout lowers utility costs long-term.`, citations: ["lg3"] },
+  },
+  ma_fiona: {
+    housing:     { text: `As Treasurer, issued housing bonds to UC and CSU campuses. Would use Lt. Gov. board seats to spur more student and workforce housing by partnering with private developers to lease unused campus spaces (e.g., theaters, parking). Broad coalition of 30+ mayors and Assembly Democrats.`, citations: ["lg1", "lg4", "lg11"] },
+    homeless:    { text: `Grew and revamped the state's affordable housing and homeless housing programs as Treasurer. Would use board seats and fiscal expertise to expand affordable housing production. Less specific on enforcement or mental health policy.`, citations: ["lg11", "lg4"] },
+    economy:     { text: `Emphasizes deep fiscal and institutional experience as CPA and State Treasurer. Supports attracting quality jobs, financial literacy education, and protecting California's competitiveness amid federal tariff pressures. Pro-business moderate.`, citations: ["lg4", "lg11"] },
+    energy:      { text: `Supports ambitious climate and clean energy goals. Would use Lt. Gov. powers to advance California's energy transition; funded clean energy projects as Treasurer to create jobs. Less specific on specific energy mandates vs. governor candidates.`, citations: ["lg11", "lg4"] },
+    immigration: { text: `Daughter of immigrants; would be first elected Asian American Lt. Governor. Supports immigrant communities and California's inclusive values. Less specific on specific immigration enforcement or sanctuary policy from the Lt. Gov. office.`, citations: ["lg11"] },
+    wildfire:    { text: `Would use Lt. Gov. seat on State Lands Commission to convene stakeholders on housing, drought, and wildfires. Supports cutting red tape for faster rebuilding. Less specific on fire prevention policy or insurance market reform.`, citations: ["lg4", "lg2"] },
+    budget:      { text: `CPA background is core to her pitch: find alternative revenue for universities outside the general fund by partnering with private companies to lease unused campus assets. Fiscally pragmatic; opposed to unsustainable spending.`, citations: ["lg1", "lg4"] },
+    healthcare:  { text: `Supports expanding healthcare access and protecting existing programs. General commitment to healthcare equity; less specific than some candidates on structural reform from the Lt. Gov. office.`, citations: ["lg11"] },
+    ai:          { text: `Supports industries of the future and using the Lt. Gov.'s unique seat on all three higher education boards (UC, CSU, community colleges) to connect education, workforce development, and tech economic growth. No specific AI regulation or tax policy.`, citations: ["lg4"] },
+    education:   { text: `The only elected official on all three higher ed boards (UC Regents, CSU Trustees, Community College Board). Would use that position to reduce cost of attendance, build student housing through private partnerships, and ensure degrees lead to good jobs. Endorsement from California Labor Federation.`, citations: ["lg1", "lg4", "lg9"] },
+    costliving:  { text: `Housing bonds and private campus partnerships to lower housing and tuition costs. Fiscal stability as Treasurer is her primary credential for managing cost-of-living pressures. Supports protecting Californians' financial stability.`, citations: ["lg11", "lg4"] },
+  },
+  tubbs: {
+    housing:     { text: `Would use Lt. Gov. seats on UC Regents, CSU Trustees, and State Lands Commission to build student and workforce housing on public land, funded via housing bonds. Housing shortage hits young Californians hardest — average first-time buyer age is nearly a decade older than in the 1980s.`, citations: ["lg5", "lg6"] },
+    homeless:    { text: `Supports building housing as the core solution. Also advocates for guaranteed income programs for people exiting homelessness and eviction prevention efforts, drawing on Stockton's nationally recognized guaranteed income pilot.`, citations: ["lg5", "lg6"] },
+    economy:     { text: `Supports Prop 13 split-roll reform (commercial property tax increase), extending Prop 55 (income tax on high earners), and a data dividend — a fee on tech/AI profits because California's data powers those profits. Advocates for guaranteed income as an economic floor.`, citations: ["lg6", "lg5"] },
+    energy:      { text: `Less specific on energy policy; general support for clean energy transition and reducing California's climate risk. Focus is primarily on economic equity and housing rather than energy regulation from the Lt. Gov. office.`, citations: ["lg5"] },
+    immigration: { text: `Less specific on immigration from the Lt. Gov. office; general support for immigrant communities and protecting California's inclusive values as part of broader equity focus.`, citations: ["lg5"] },
+    wildfire:    { text: `Less specific on wildfire policy. Would use State Lands Commission role to support smarter land use. General support for climate resilience as part of anti-poverty and equity agenda.`, citations: ["lg5"] },
+    budget:      { text: `Raise revenue via Prop 13 split-roll, Prop 55 extension, and a data dividend on AI/tech profits. Strongly opposed to austerity cuts to public programs. Would fund guaranteed income and housing programs through new progressive revenue.`, citations: ["lg6"] },
+    healthcare:  { text: `Notes that more than 70% of CA community college students and 50% of Cal State students report food insecurity. Would address food insecurity on campuses as a healthcare and poverty issue. General support for expanding healthcare access.`, citations: ["lg5"] },
+    ai:          { text: `Supports a data dividend — a fee on AI and tech company profits because California's data and workforce power those profits. Proceeds would fund workers displaced by automation and public programs. Only Lt. Gov. candidate with a specific AI economic policy.`, citations: ["lg6"] },
+    education:   { text: `Would not vote to raise tuition — period. Cut administrative bloat to freeze costs. Slash remedial coursework that doesn't count toward graduation. Streamline programs for in-demand industries like nursing. Build student and workforce housing on campuses. Use board seats to advance Black-owned business procurement.`, citations: ["lg5", "lg6", "lg1"] },
+    costliving:  { text: `Guaranteed income programs as an economic floor; affordable housing as a prerequisite for stability; freeze tuition; address food insecurity on campuses. Revenue from split-roll and data dividend to fund public services without cutting them.`, citations: ["lg5", "lg6"] },
+  },
+  romero: {
+    housing:     { text: `Would use Lt. Gov. role on the State Lands Commission and Coastal Commission to open more public land for housing development. Supports cutting permitting red tape and streamlining rebuilding after disasters. End bureaucratic obstruction of housing construction.`, citations: ["lg7", "lg2"] },
+    homeless:    { text: `Blames Democratic one-party rule for the homelessness crisis. Supports government accountability for billions spent without results. Less specific on alternative policy approaches; emphasizes restoring common sense and ending the cycle of spending without outcomes.`, citations: ["lg7", "lg12"] },
+    economy:     { text: `End one-party Democratic rule that has driven up costs and eroded public safety. Attract businesses back to California by reducing regulatory burden. Align with Hilton's tax-cut and spending-reduction agenda. Appeal to disillusioned moderate Democrats and Latinos.`, citations: ["lg12", "lg1"] },
+    energy:      { text: `Would use State Lands Commission seat to support new oil exploration. Skeptical of climate mandates that raise costs. Supports clearing underbrush and smarter land management over ideological environmental policy.`, citations: ["lg2", "lg7"] },
+    immigration: { text: `Endorsed Trump; aligned with Hilton's pro-enforcement, full-ICE-cooperation stance. Supports overturning sanctuary policies. Frames one-party Democratic rule as responsible for failed immigration management.`, citations: ["lg12"] },
+    wildfire:    { text: `Major campaign focus. Would restructure and streamline the State Lands and Coastal Commissions that she says answer to Sacramento special interests rather than communities. Faster rebuilding permits. Smarter land management and fire prevention. Calls current approach "Let Them Burn" malfeasance. Collaborate with federal partners.`, citations: ["lg7", "lg2"] },
+    budget:      { text: `End wasteful government spending; government accountability for every dollar. Reduce administrative bloat. Opposes progressive spending without results. Aligns with Hilton's Florida-model approach: lower spending, better outcomes.`, citations: ["lg12", "lg7"] },
+    healthcare:  { text: `Less specific on healthcare policy from the Lt. Gov. office. General emphasis on accountability and common sense over ideology. Skeptical of state-run expansion without demonstrated results.`, citations: ["lg7"] },
+    ai:          { text: `Less specific on AI policy. Pro-business, anti-regulation stance implies opposition to new fees or mandates on tech sector. Supports California's tech economy as a job creator.`, citations: ["lg7"] },
+    education:   { text: `Top priority. Would use all Lt. Gov. board seats to restore merit in admissions, protect academic standards, slash remedial coursework, and create a K–12-to-college pipeline. Supports school vouchers (taxpayer dollars for private school). Against "lowering the bar." First woman CA Senate Majority Leader; reputation built on education reform.`, citations: ["lg1", "lg7", "lg9"] },
+    costliving:  { text: `End Democratic one-party rule as the root cause of high costs. Open more land via State Lands Commission for housing. Support new oil exploration to lower gas prices. Cut regulations and bureaucracy that inflate prices.`, citations: ["lg12", "lg7"] },
+  },
+};
+
+// ── Races registry ─────────────────────────────────────────────────────────
+
+export const RACES = {
+  governor: {
+    id: 'governor',
+    label: 'Governor',
+    candidates: GOV_CANDIDATES,
+    issues: GOV_ISSUES,
+    citations: GOV_CITATIONS,
+    positions: GOV_POSITIONS,
+    contextNote: null,
+  },
+  ltgov: {
+    id: 'ltgov',
+    label: 'Lt. Governor',
+    candidates: LTGOV_CANDIDATES,
+    issues: LTGOV_ISSUES,
+    citations: LTGOV_CITATIONS,
+    positions: LTGOV_POSITIONS,
+    contextNote: `The California Lieutenant Governor has limited formal powers. Positions here are framed around the office's actual levers: UC Board of Regents, CSU Board of Trustees, Community College Board of Governors, State Lands Commission, Coastal Commission (non-voting), Senate tie-breaking vote, and acting governor when the governor leaves California. The office has a budget of ~$3 million.`,
   },
 };

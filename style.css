@@ -301,6 +301,10 @@ header {
 }
 
 /* Candidate header cells */
+.comparison-table thead tr {
+  background: white;
+}
+
 .comparison-table thead th {
   position: sticky;
   top: 0;
@@ -312,6 +316,7 @@ header {
   vertical-align: top;
   min-width: 200px;
   max-width: 240px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.06);
 }
 
 /* Corner cell — sticky in both directions */
@@ -373,6 +378,11 @@ header {
 }
 
 /* Body rows */
+.comparison-table tbody td {
+  position: relative;
+  z-index: 0;
+}
+
 .comparison-table tbody tr {
   border-bottom: 1px solid #f3f4f6;
 }
@@ -517,6 +527,9 @@ sup.cite:hover {
   border-top: 1px solid #e5e7eb;
   z-index: 30;
   padding: 14px 20px;
+  height: 74px;
+  display: flex;
+  align-items: center;
 }
 
 .score-bar-inner {
@@ -524,6 +537,7 @@ sup.cite:hover {
   align-items: center;
   gap: 12px;
   overflow-x: auto;
+  width: 100%;
 }
 
 .score-summary {

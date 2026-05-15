@@ -515,13 +515,9 @@ function bindEvents() {
     }
   });
 
-  // Reset all selections
+  // Reset picks only (candidates stay selected)
   document.getElementById('reset-all-btn').addEventListener('click', () => {
-    state.selectedCandidateIds = new Set();
-    state.selectedIssueIds = new Set(ALL_ISSUE_IDS);
     state.picks = {};
-    renderCandidatePanel();
-    renderIssuePanel();
     renderMatrix();
     renderScoreBar();
     renderResults();
@@ -543,8 +539,8 @@ function bindEvents() {
 // ── Header Buttons ─────────────────────────────────────────────────────────
 
 function updateHeaderButtons() {
-  const hasSelections = state.selectedCandidateIds.size > 0 || Object.keys(state.picks).length > 0;
-  document.getElementById('reset-all-btn').disabled = !hasSelections;
+  const hasPicks = Object.keys(state.picks).length > 0;
+  document.getElementById('reset-all-btn').disabled = !hasPicks;
 }
 
 // ── URL State ──────────────────────────────────────────────────────────────

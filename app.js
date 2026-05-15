@@ -2,10 +2,8 @@ import { CANDIDATES, ISSUES, CITATIONS, POSITIONS } from './data.js';
 
 // ── State ──────────────────────────────────────────────────────────────────
 
-const DEFAULT_SELECTED = new Set(['hilton', 'bianco', 'steyer', 'becerra', 'porter']);
-
 const state = {
-  selectedCandidateIds: new Set(DEFAULT_SELECTED),
+  selectedCandidateIds: new Set(),
   selectedIssueIds: new Set(ISSUES.map(i => i.id)),
   picks: {}, // issueId -> candidateId
 };
@@ -217,7 +215,7 @@ function renderScoreBar() {
     const pct = totalIssues > 0 ? Math.round((picks / totalIssues) * 100) : 0;
     const shortName = c.name.split(' ').pop();
     return `
-      <div class="score-card">
+      <div class="score-card" data-candidate="${c.id}">
         <div class="score-card-name">${shortName} — ${picks}</div>
         <div class="score-progress-track">
           <div class="score-progress-fill" style="width: ${pct}%"></div>
@@ -328,6 +326,51 @@ function dismissPopover() {
   popover.style.visibility = '';
 }
 
+// ── Score Card Popup ───────────────────────────────────────────────────────
+
+function showScoreCardPopup(candidateId, triggerEl) {
+  const candidate = CANDIDATES.find(c => c.id === candidateId);
+  if (!candidate) return;
+
+  const visibleIssues = getSelectedIssues();
+  const pickedIssues = visibleIssues.filter(i => state.picks[i.id] === candidateId);
+
+  const issueRows = pickedIssues.length
+    ? pickedIssues.map(i => `
+        <div class="score-popup-issue">
+          <span class="score-popup-check">✓</span>
+          ${escapeHtml(i.label)}
+        </div>`).join('')
+    : `<div class="score-popup-empty">No issues selected yet</div>`;
+
+  const popup = document.getElementById('score-card-popup');
+  popup.innerHTML = `
+    <div class="score-popup-header">${escapeHtml(candidate.name)}</div>
+    ${issueRows}`;
+
+  popup.style.visibility = 'hidden';
+  popup.classList.remove('hidden');
+
+  const ph = popup.offsetHeight;
+  const pw = popup.offsetWidth;
+  const rect = triggerEl.getBoundingClientRect();
+  const vw = window.innerWidth;
+
+  let left = rect.left;
+  if (left + pw > vw - 16) left = vw - pw - 16;
+  if (left < 16) left = 16;
+
+  popup.style.top = `${rect.top - ph - 8}px`;
+  popup.style.left = `${left}px`;
+  popup.style.visibility = 'visible';
+}
+
+function dismissScoreCardPopup() {
+  const popup = document.getElementById('score-card-popup');
+  popup.classList.add('hidden');
+  popup.style.visibility = '';
+}
+
 // ── Event Handlers ─────────────────────────────────────────────────────────
 
 function handleCandidateToggle(candidateId, checked) {
@@ -345,6 +388,8 @@ function handleCandidateToggle(candidateId, checked) {
   renderMatrix();
   renderScoreBar();
   renderResults();
+  updateHeaderButtons();
+  syncUrl();
 }
 
 function handleIssueToggle(issueId, checked) {
@@ -357,6 +402,8 @@ function handleIssueToggle(issueId, checked) {
   renderMatrix();
   renderScoreBar();
   renderResults();
+  updateHeaderButtons();
+  syncUrl();
 }
 
 function handleCellClick(issueId, candidateId) {
@@ -372,6 +419,8 @@ function handleCellClick(issueId, candidateId) {
   renderMatrix();
   renderScoreBar();
   renderResults();
+  updateHeaderButtons();
+  syncUrl();
 }
 
 // ── Event Binding ──────────────────────────────────────────────────────────
@@ -406,25 +455,39 @@ function bindEvents() {
     }
   });
 
-  // Score bar: see results button (rendered dynamically)
+  // Score bar: see results button + score card popup
   document.getElementById('score-bar').addEventListener('click', e => {
     if (e.target.id === 'see-results-btn') {
       const results = document.getElementById('results-container');
       results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    const card = e.target.closest('.score-card');
+    if (card) {
+      e.stopPropagation();
+      const popup = document.getElementById('score-card-popup');
+      if (!popup.classList.contains('hidden') && popup.dataset.for === card.dataset.candidate) {
+        dismissScoreCardPopup();
+        return;
+      }
+      popup.dataset.for = card.dataset.candidate;
+      showScoreCardPopup(card.dataset.candidate, card);
     }
   });
 
-  // Results: reset button (rendered dynamically)
+  // Results: reset picks button (rendered dynamically)
   document.getElementById('results-container').addEventListener('click', e => {
     if (e.target.id === 'reset-btn') {
       state.picks = {};
       renderMatrix();
       renderScoreBar();
       renderResults();
+      updateHeaderButtons();
+      syncUrl();
     }
   });
 
-  // Dismiss popover on outside click
+  // Dismiss popovers on outside click
   document.addEventListener('click', e => {
     const popover = document.getElementById('citation-popover');
     if (
@@ -434,13 +497,39 @@ function bindEvents() {
     ) {
       dismissPopover();
     }
+
+    const scorePopup = document.getElementById('score-card-popup');
+    if (
+      !scorePopup.classList.contains('hidden') &&
+      !scorePopup.contains(e.target) &&
+      !e.target.closest('.score-card')
+    ) {
+      dismissScoreCardPopup();
+    }
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') dismissPopover();
+    if (e.key === 'Escape') {
+      dismissPopover();
+      dismissScoreCardPopup();
+    }
   });
 
-  // Copy link
+  // Reset all selections
+  document.getElementById('reset-all-btn').addEventListener('click', () => {
+    state.selectedCandidateIds = new Set();
+    state.selectedIssueIds = new Set(ALL_ISSUE_IDS);
+    state.picks = {};
+    renderCandidatePanel();
+    renderIssuePanel();
+    renderMatrix();
+    renderScoreBar();
+    renderResults();
+    updateHeaderButtons();
+    syncUrl();
+  });
+
+  // Share selections (copy link)
   document.getElementById('copy-link-btn').addEventListener('click', () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       const btn = document.getElementById('copy-link-btn');
@@ -451,14 +540,76 @@ function bindEvents() {
   });
 }
 
+// ── Header Buttons ─────────────────────────────────────────────────────────
+
+function updateHeaderButtons() {
+  const hasSelections = state.selectedCandidateIds.size > 0 || Object.keys(state.picks).length > 0;
+  document.getElementById('reset-all-btn').disabled = !hasSelections;
+}
+
+// ── URL State ──────────────────────────────────────────────────────────────
+
+const ALL_ISSUE_IDS = ISSUES.map(i => i.id);
+
+function syncUrl() {
+  const params = new URLSearchParams();
+
+  if (state.selectedCandidateIds.size > 0) {
+    params.set('c', [...state.selectedCandidateIds].join(','));
+  }
+
+  // Only encode issues if they differ from all-selected default
+  if (state.selectedIssueIds.size < ALL_ISSUE_IDS.length) {
+    params.set('i', [...state.selectedIssueIds].join(','));
+  }
+
+  const pickEntries = Object.entries(state.picks)
+    .filter(([issueId, candidateId]) =>
+      state.selectedIssueIds.has(issueId) && state.selectedCandidateIds.has(candidateId)
+    );
+  if (pickEntries.length > 0) {
+    params.set('p', pickEntries.map(([i, c]) => `${i}:${c}`).join(','));
+  }
+
+  const query = params.toString();
+  const newUrl = query ? `${location.pathname}?${query}` : location.pathname;
+  history.replaceState(null, '', newUrl);
+}
+
+function loadFromUrl() {
+  const params = new URLSearchParams(location.search);
+
+  const c = params.get('c');
+  if (c) {
+    const ids = c.split(',').filter(id => CANDIDATES.find(x => x.id === id && x.active));
+    state.selectedCandidateIds = new Set(ids.slice(0, 8));
+  }
+
+  const i = params.get('i');
+  if (i) {
+    const ids = i.split(',').filter(id => ALL_ISSUE_IDS.includes(id));
+    state.selectedIssueIds = new Set(ids);
+  }
+
+  const p = params.get('p');
+  if (p) {
+    p.split(',').forEach(pair => {
+      const [issueId, candidateId] = pair.split(':');
+      if (issueId && candidateId) state.picks[issueId] = candidateId;
+    });
+  }
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 function init() {
+  loadFromUrl();
   renderCandidatePanel();
   renderIssuePanel();
   renderMatrix();
   renderScoreBar();
   renderResults();
+  updateHeaderButtons();
   bindEvents();
 }
 

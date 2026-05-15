@@ -34,6 +34,12 @@ header {
   padding: 14px 24px;
 }
 
+.header-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .header-text h1 {
   margin: 0;
   font-size: 18px;
@@ -292,9 +298,6 @@ header {
   border-collapse: collapse;
   min-width: 100%;
   background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 /* Candidate header cells */
@@ -444,17 +447,19 @@ header {
 /* Citation superscripts */
 sup.cite {
   color: #2563eb;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  margin-left: 1px;
-  text-decoration: none;
+  margin-left: 2px;
+  padding: 1px 3px;
+  border-radius: 3px;
   line-height: 0;
+  vertical-align: super;
 }
 
 sup.cite:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
+  color: white;
+  background: #2563eb;
 }
 
 /* ── Citation popover ── */
@@ -511,7 +516,7 @@ sup.cite:hover {
   background: white;
   border-top: 1px solid #e5e7eb;
   z-index: 30;
-  padding: 10px 16px;
+  padding: 14px 20px;
 }
 
 .score-bar-inner {
@@ -540,12 +545,20 @@ sup.cite:hover {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 6px 10px;
-  min-width: 110px;
+  padding: 10px 14px;
+  min-width: 130px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  user-select: none;
+}
+
+.score-card:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
 }
 
 .score-card-name {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
   white-space: nowrap;
@@ -554,8 +567,8 @@ sup.cite:hover {
 }
 
 .score-progress-track {
-  margin-top: 4px;
-  height: 4px;
+  margin-top: 6px;
+  height: 6px;
   background: #e5e7eb;
   border-radius: 99px;
   overflow: hidden;
@@ -605,12 +618,17 @@ sup.cite:hover {
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.1s;
+  transition: background 0.1s, opacity 0.1s;
   font-family: inherit;
 }
 
-.btn-secondary:hover {
+.btn-secondary:hover:not(:disabled) {
   background: #f9fafb;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .btn-ghost {
@@ -632,10 +650,72 @@ sup.cite:hover {
   color: #374151;
 }
 
+/* ── Score card popup ── */
+
+.score-card-popup {
+  position: fixed;
+  z-index: 35;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+  padding: 14px 16px;
+  min-width: 210px;
+  max-width: 260px;
+}
+
+.score-popup-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.score-popup-empty {
+  font-size: 13px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.score-popup-issue {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+  font-size: 13px;
+  color: #374151;
+  border-bottom: 1px solid #f9fafb;
+}
+
+.score-popup-issue:last-child {
+  border-bottom: none;
+}
+
+.score-popup-check {
+  width: 16px;
+  height: 16px;
+  background: #16a34a;
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 /* ── Results section ── */
 
 #results-container {
-  padding: 24px 16px 100px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+#results-container:not(:empty) {
+  padding: 16px 16px 24px;
 }
 
 .results-card {

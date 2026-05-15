@@ -16,7 +16,10 @@
         <h1>CA Governor 2026: Find Your Match</h1>
         <p class="subtitle">Compare candidates on 11 key issues and find your best match.</p>
       </div>
-      <button id="copy-link-btn" class="btn-secondary">Copy link</button>
+      <div class="header-actions">
+        <button id="reset-all-btn" class="btn-secondary" disabled>Reset selections</button>
+        <button id="copy-link-btn" class="btn-secondary">Share selections</button>
+      </div>
     </div>
   </header>
 
@@ -52,6 +55,7 @@
   <div id="score-bar" class="score-bar"></div>
 
   <div id="citation-popover" class="citation-popover hidden" role="tooltip"></div>
+  <div id="score-card-popup" class="score-card-popup hidden" role="tooltip"></div>
 
   <script type="module" src="app.js"></script>
 </body>

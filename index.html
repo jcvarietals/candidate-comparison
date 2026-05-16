@@ -65,6 +65,26 @@
   <div id="citation-popover" class="citation-popover hidden" role="tooltip"></div>
   <div id="score-card-popup" class="score-card-popup hidden" role="tooltip"></div>
 
+  <div id="long-popup-overlay" class="long-popup-overlay hidden" role="dialog" aria-modal="true">
+    <div class="long-popup">
+      <div class="long-popup-header">
+        <div class="long-popup-meta">
+          <span class="long-popup-candidate"></span>
+          <span class="long-popup-issue-label">on</span>
+          <span class="long-popup-issue"></span>
+        </div>
+        <button id="long-popup-close" class="long-popup-close" aria-label="Close">✕</button>
+      </div>
+      <div class="long-popup-scroll">
+        <div class="long-popup-body"></div>
+        <div class="long-popup-cites-section">
+          <div class="long-popup-cites-label">Sources</div>
+          <div class="long-popup-cites"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>

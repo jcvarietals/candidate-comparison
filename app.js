@@ -1,5 +1,8 @@
 import { RACES } from './data.js';
 
+// ── Long positions (lazy-loaded on first "See more" click) ─────────────────
+let positionsLong = null;
+
 // ── State ──────────────────────────────────────────────────────────────────
 
 const state = {
@@ -196,6 +199,7 @@ function renderMatrix() {
           <td class="${cls}" data-issue="${issue.id}" data-candidate="${c.id}">
             ${isPicked ? '<span class="checkmark">✓</span>' : ''}
             <p class="cell-text">${escapeHtml(pos.text)}${buildCiteHtml(pos.citations)}</p>
+            <button class="see-more-btn" data-issue="${issue.id}" data-candidate="${c.id}"><em>See more</em></button>
           </td>`;
       } else {
         html += `
@@ -362,6 +366,51 @@ function dismissScoreCardPopup() {
   popup.style.visibility = '';
 }
 
+// ── Long-form popup ────────────────────────────────────────────────────────
+
+async function showLongPopup(issueId, candidateId) {
+  if (!positionsLong) {
+    const mod = await import('./positions_long.js');
+    positionsLong = mod.POSITIONS_LONG;
+  }
+
+  const race = getRace();
+  const longData = positionsLong[state.race]?.[candidateId]?.[issueId];
+  if (!longData) return;
+
+  const candidate = race.candidates.find(c => c.id === candidateId);
+  const issue = race.issues.find(i => i.id === issueId);
+  const citesHtml = (longData.citations || []).map(key => {
+    const cit = race.citations[key];
+    if (!cit) return '';
+    return `<div class="long-popup-cite">
+      <span class="cite-source">${escapeHtml(cit.source)}</span>
+      <span class="cite-title">${escapeHtml(cit.title)}</span>
+      ${cit.url ? `<a class="cite-url" href="${escapeHtml(cit.url)}" target="_blank" rel="noopener">${escapeHtml(cit.url)}</a>` : ''}
+      ${cit.date ? `<span class="cite-date">${escapeHtml(cit.date)}</span>` : ''}
+    </div>`;
+  }).join('');
+
+  const paragraphs = longData.text_long
+    .split(/\n\s*\n/)
+    .map(p => p.trim())
+    .filter(Boolean)
+    .map(p => `<p>${escapeHtml(p)}</p>`)
+    .join('');
+
+  const modal = document.getElementById('long-popup-overlay');
+  modal.querySelector('.long-popup-candidate').textContent = candidate?.name ?? candidateId;
+  modal.querySelector('.long-popup-issue').textContent = issue?.label ?? issueId;
+  modal.querySelector('.long-popup-body').innerHTML = paragraphs;
+  modal.querySelector('.long-popup-cites').innerHTML = citesHtml;
+  modal.querySelector('.long-popup-scroll').scrollTop = 0;
+  modal.classList.remove('hidden');
+}
+
+function dismissLongPopup() {
+  document.getElementById('long-popup-overlay').classList.add('hidden');
+}
+
 // ── Header buttons ─────────────────────────────────────────────────────────
 
 function updateHeaderButtons() {
@@ -513,11 +562,17 @@ function bindEvents() {
     }
   });
 
-  // Matrix: cell clicks and citation clicks
+  // Matrix: cell clicks, citation clicks, and "See more"
   document.getElementById('matrix-container').addEventListener('click', e => {
     if (e.target.classList.contains('cite')) {
       e.stopPropagation();
       showCitationPopover(e.target.dataset.cite, e.target);
+      return;
+    }
+    const seeMore = e.target.closest('.see-more-btn');
+    if (seeMore) {
+      e.stopPropagation();
+      showLongPopup(seeMore.dataset.issue, seeMore.dataset.candidate);
       return;
     }
     const cell = e.target.closest('.position-cell');
@@ -525,6 +580,12 @@ function bindEvents() {
       handleCellClick(cell.dataset.issue, cell.dataset.candidate);
     }
   });
+
+  // Long popup dismiss
+  document.getElementById('long-popup-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) dismissLongPopup();
+  });
+  document.getElementById('long-popup-close').addEventListener('click', dismissLongPopup);
 
   // Score bar: see results + score card popup
   document.getElementById('score-bar').addEventListener('click', e => {
@@ -590,7 +651,7 @@ function bindEvents() {
   });
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { dismissPopover(); dismissScoreCardPopup(); }
+    if (e.key === 'Escape') { dismissPopover(); dismissScoreCardPopup(); dismissLongPopup(); }
   });
 }
 

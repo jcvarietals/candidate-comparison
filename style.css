@@ -40,6 +40,18 @@ header {
   flex-shrink: 0;
 }
 
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-logo {
+  height: 40px;
+  width: auto;
+  flex-shrink: 0;
+}
+
 .header-text h1 {
   margin: 0;
   font-size: 18px;
@@ -1141,6 +1153,10 @@ sup.cite:hover {
     flex-wrap: wrap;
     padding: 10px 16px;
     gap: 8px;
+  }
+
+  .header-logo {
+    height: 32px;
   }
 
   .header-text h1 {

@@ -1,12 +1,14 @@
-# CA Governor 2026: Find Your Match
+# CA Primary 2026: Find Your Match
 
-Compare California governor candidates on 11 key issues and find your best match.
+Compare California statewide primary candidates on key issues and find your best match.
 
 ## Files
 - `index.html` — app shell
 - `style.css` — all styles
 - `app.js` — rendering and interaction logic
 - `data.js` — all candidate data, positions, and citations
+- `positions_long.js` — aggregator for long-form position data (lazy-loaded)
+- `GOV_POSITIONS_LONG.js`, `LT_GOV_POSITIONS_LONG.js`, `IC_POSITIONS_LONG.js`, `AG_POSITIONS_LONG.js` — long-form position text per race
 
 ## Running locally
 
@@ -14,13 +16,13 @@ This app uses ES modules (`import`/`export`), which require serving over HTTP �
 
 ```bash
 # Python 3
-python3 -m http.server 8080
+python3 -m http.server 8081
 
 # Node (npx)
 npx serve .
 ```
 
-Then open `http://localhost:8080`.
+Then open `http://localhost:8081`.
 
 ## Deploying to Cloudflare Pages
 
@@ -32,8 +34,6 @@ Then open `http://localhost:8080`.
    - **Build output directory:** `/` (root)
 4. Save and deploy — auto-deploys on every push to `main`
 
-App will be live at `<project-name>.pages.dev`.
-
 ## Updating data
 
-Edit `data.js` to update polling percentages, positions, or citations. All data is static — no backend required.
+Edit `data.js` to update polling percentages, short positions, or citations. Edit the `*_POSITIONS_LONG.js` files to update long-form position detail. All data is static — no backend required.

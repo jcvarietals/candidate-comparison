@@ -766,25 +766,34 @@ function bindEvents() {
     syncUrl();
   });
 
-  // Share current race
+  // Share dropdown
+  document.getElementById('share-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('share-menu').classList.toggle('hidden');
+  });
+
   document.getElementById('copy-link-btn').addEventListener('click', () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
-      const btn = document.getElementById('copy-link-btn');
-      const orig = btn.textContent;
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = orig; }, 2000);
+      const shareBtn = document.getElementById('share-btn');
+      shareBtn.textContent = 'Copied!';
+      document.getElementById('share-menu').classList.add('hidden');
+      setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000);
     });
   });
 
-  // Share all races
   document.getElementById('copy-all-btn').addEventListener('click', () => {
     const url = location.origin + buildAllRacesUrl();
     navigator.clipboard.writeText(url).then(() => {
-      const btn = document.getElementById('copy-all-btn');
-      const orig = btn.textContent;
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.textContent = orig; }, 2000);
+      const shareBtn = document.getElementById('share-btn');
+      shareBtn.textContent = 'Copied!';
+      document.getElementById('share-menu').classList.add('hidden');
+      setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000);
     });
+  });
+
+  // Reset everything
+  document.getElementById('reset-btn-header').addEventListener('click', () => {
+    location.href = location.pathname;
   });
 
   // Dismiss popovers on outside click
@@ -796,6 +805,10 @@ function bindEvents() {
     const scorePopup = document.getElementById('score-card-popup');
     if (!scorePopup.classList.contains('hidden') && !scorePopup.contains(e.target) && !e.target.closest('.score-card')) {
       dismissScoreCardPopup();
+    }
+    const shareMenu = document.getElementById('share-menu');
+    if (!shareMenu.classList.contains('hidden') && !shareMenu.closest('.share-dropdown-wrap').contains(e.target)) {
+      shareMenu.classList.add('hidden');
     }
   });
 

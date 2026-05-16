@@ -17,9 +17,15 @@
         <p class="subtitle">Compare candidates on key issues and find your best match.</p>
       </div>
       <div class="header-actions">
-        <button id="reset-all-btn" class="btn-secondary" disabled>Reset selections</button>
-        <button id="copy-link-btn" class="btn-secondary">Share current race</button>
-        <button id="copy-all-btn" class="btn-secondary">Share all races</button>
+        <button id="reset-all-btn" class="btn-secondary" disabled>Clear</button>
+        <div class="share-dropdown-wrap">
+          <button id="share-btn" class="btn-secondary">Share</button>
+          <div id="share-menu" class="share-menu hidden">
+            <button id="copy-link-btn" class="share-menu-item">Share current race</button>
+            <button id="copy-all-btn" class="share-menu-item">Share all races</button>
+          </div>
+        </div>
+        <button id="reset-btn-header" class="btn-secondary">Reset</button>
       </div>
     </div>
   </header>

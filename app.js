@@ -3,6 +3,11 @@ import { RACES } from './data.js';
 // ── Long positions (lazy-loaded on first "See more" click) ─────────────────
 let positionsLong = null;
 
+// ── Per-race state (saved when switching races) ────────────────────────────
+const raceStates = {};
+
+const RACE_PREFIX = { governor: 'gov', ltgov: 'lg', inscomm: 'ins', ag: 'ag' };
+
 // ── State ──────────────────────────────────────────────────────────────────
 
 const state = {
@@ -54,6 +59,27 @@ function allIssuesPicked() {
   return visible.length > 0 && visible.every(i =>
     state.picks[i.id] && state.selectedCandidateIds.has(state.picks[i.id])
   );
+}
+
+function saveRaceState(raceId) {
+  raceStates[raceId] = {
+    selectedCandidateIds: new Set(state.selectedCandidateIds),
+    selectedIssueIds: new Set(state.selectedIssueIds),
+    picks: { ...state.picks },
+  };
+}
+
+function restoreRaceState(raceId) {
+  const saved = raceStates[raceId];
+  if (saved) {
+    state.selectedCandidateIds = new Set(saved.selectedCandidateIds);
+    state.selectedIssueIds = new Set(saved.selectedIssueIds);
+    state.picks = { ...saved.picks };
+  } else {
+    state.selectedCandidateIds = new Set();
+    state.selectedIssueIds = new Set(RACES[raceId].issues.map(i => i.id));
+    state.picks = {};
+  }
 }
 
 // ── Race tabs ──────────────────────────────────────────────────────────────
@@ -450,36 +476,84 @@ function loadFromUrl() {
   const race = params.get('race');
   if (race && RACES[race]) state.race = race;
 
-  const validCandidateIds = getRace().candidates.filter(c => c.active).map(c => c.id);
-  const c = params.get('c');
-  if (c) {
-    const ids = c.split(',').filter(id => validCandidateIds.includes(id));
-    state.selectedCandidateIds = new Set(ids.slice(0, 8));
-  }
+  const isAllRaces = [...params.keys()].some(k => /_c$|_p$|_i$/.test(k));
 
-  const allIds = allIssueIds();
-  const i = params.get('i');
-  state.selectedIssueIds = i
-    ? new Set(i.split(',').filter(id => allIds.includes(id)))
-    : new Set(allIds);
-
-  const p = params.get('p');
-  if (p) {
-    p.split(',').forEach(pair => {
-      const [issueId, candidateId] = pair.split(':');
-      if (issueId && candidateId) state.picks[issueId] = candidateId;
-    });
+  if (isAllRaces) {
+    for (const [raceId, raceData] of Object.entries(RACES)) {
+      const prefix = RACE_PREFIX[raceId];
+      const c = params.get(`${prefix}_c`);
+      const i = params.get(`${prefix}_i`);
+      const p = params.get(`${prefix}_p`);
+      const validIds = raceData.candidates.filter(x => x.active).map(x => x.id);
+      const allIds = raceData.issues.map(x => x.id);
+      raceStates[raceId] = {
+        selectedCandidateIds: c ? new Set(c.split(',').filter(id => validIds.includes(id)).slice(0, 8)) : new Set(),
+        selectedIssueIds: i ? new Set(i.split(',').filter(id => allIds.includes(id))) : new Set(allIds),
+        picks: {},
+      };
+      if (p) {
+        p.split(',').forEach(pair => {
+          const [issueId, candidateId] = pair.split(':');
+          if (issueId && candidateId) raceStates[raceId].picks[issueId] = candidateId;
+        });
+      }
+    }
+    restoreRaceState(state.race);
+  } else {
+    const validCandidateIds = getRace().candidates.filter(c => c.active).map(c => c.id);
+    const c = params.get('c');
+    if (c) {
+      const ids = c.split(',').filter(id => validCandidateIds.includes(id));
+      state.selectedCandidateIds = new Set(ids.slice(0, 8));
+    }
+    const allIds = allIssueIds();
+    const i = params.get('i');
+    state.selectedIssueIds = i
+      ? new Set(i.split(',').filter(id => allIds.includes(id)))
+      : new Set(allIds);
+    const p = params.get('p');
+    if (p) {
+      p.split(',').forEach(pair => {
+        const [issueId, candidateId] = pair.split(':');
+        if (issueId && candidateId) state.picks[issueId] = candidateId;
+      });
+    }
   }
+}
+
+function buildAllRacesUrl() {
+  const params = new URLSearchParams();
+  params.set('race', state.race);
+  saveRaceState(state.race);
+
+  for (const [raceId, raceData] of Object.entries(RACES)) {
+    const rs = raceStates[raceId];
+    if (!rs || (rs.selectedCandidateIds.size === 0 && Object.keys(rs.picks).length === 0)) continue;
+    const prefix = RACE_PREFIX[raceId];
+    if (rs.selectedCandidateIds.size > 0) {
+      params.set(`${prefix}_c`, [...rs.selectedCandidateIds].join(','));
+    }
+    const allIds = raceData.issues.map(i => i.id);
+    if (rs.selectedIssueIds.size < allIds.length) {
+      params.set(`${prefix}_i`, [...rs.selectedIssueIds].join(','));
+    }
+    const pickEntries = Object.entries(rs.picks).filter(([issueId, candidateId]) =>
+      rs.selectedIssueIds.has(issueId) && rs.selectedCandidateIds.has(candidateId)
+    );
+    if (pickEntries.length > 0) {
+      params.set(`${prefix}_p`, pickEntries.map(([i, c]) => `${i}:${c}`).join(','));
+    }
+  }
+  return `${location.pathname}?${params.toString()}`;
 }
 
 // ── Race switching ─────────────────────────────────────────────────────────
 
 function handleRaceSwitch(raceId) {
   if (raceId === state.race) return;
+  saveRaceState(state.race);
   state.race = raceId;
-  state.selectedCandidateIds = new Set();
-  state.selectedIssueIds = new Set(allIssueIds());
-  state.picks = {};
+  restoreRaceState(raceId);
   renderAll();
   syncUrl();
 }
@@ -628,10 +702,21 @@ function bindEvents() {
     syncUrl();
   });
 
-  // Share selections
+  // Share current race
   document.getElementById('copy-link-btn').addEventListener('click', () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
       const btn = document.getElementById('copy-link-btn');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+  });
+
+  // Share all races
+  document.getElementById('copy-all-btn').addEventListener('click', () => {
+    const url = location.origin + buildAllRacesUrl();
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById('copy-all-btn');
       const orig = btn.textContent;
       btn.textContent = 'Copied!';
       setTimeout(() => { btn.textContent = orig; }, 2000);

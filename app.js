@@ -3,6 +3,60 @@ import { RACES } from './data.js';
 // ── Long positions (lazy-loaded on first "See more" click) ─────────────────
 let positionsLong = null;
 
+// ── Mobile bottom sheet ────────────────────────────────────────────────────
+let mobileSheetTarget = null;
+
+function openMobileSheet(target) {
+  const sheet = document.getElementById('mobile-sheet');
+  const content = document.getElementById('mobile-sheet-content');
+
+  const titles = { candidates: 'Candidates', issues: 'Issues', race: 'Select Race' };
+  document.getElementById('mobile-sheet-title').textContent = titles[target] ?? target;
+
+  // Move the actual DOM nodes into the sheet so existing event listeners work
+  content.innerHTML = '';
+  if (target === 'candidates') {
+    content.appendChild(document.getElementById('max-warning'));
+    content.appendChild(document.getElementById('candidate-list'));
+  } else if (target === 'issues') {
+    content.appendChild(document.getElementById('issue-list'));
+  } else if (target === 'race') {
+    content.appendChild(document.getElementById('race-tabs'));
+    content.appendChild(document.querySelector('.race-switch-note'));
+  }
+
+  mobileSheetTarget = target;
+  sheet.classList.remove('hidden');
+  document.getElementById('mobile-candidates-btn').classList.toggle('active', target === 'candidates');
+  document.getElementById('mobile-issues-btn').classList.toggle('active', target === 'issues');
+  document.getElementById('mobile-race-btn').classList.toggle('active', target === 'race');
+}
+
+function closeMobileSheet() {
+  if (!mobileSheetTarget) return;
+  const sheet = document.getElementById('mobile-sheet');
+
+  // Move nodes back to their original home in the sidebar
+  const candidatesPanel = document.querySelector('.sidebar .panel:first-child');
+  const issuesPanel = document.querySelector('.sidebar .panel:last-child');
+  const raceStripInner = document.querySelector('.race-strip-inner');
+  if (mobileSheetTarget === 'candidates') {
+    candidatesPanel.appendChild(document.getElementById('max-warning'));
+    candidatesPanel.appendChild(document.getElementById('candidate-list'));
+  } else if (mobileSheetTarget === 'issues') {
+    issuesPanel.appendChild(document.getElementById('issue-list'));
+  } else if (mobileSheetTarget === 'race') {
+    raceStripInner.appendChild(document.getElementById('race-tabs'));
+    raceStripInner.appendChild(document.querySelector('.race-switch-note'));
+  }
+
+  mobileSheetTarget = null;
+  sheet.classList.add('hidden');
+  document.getElementById('mobile-candidates-btn').classList.remove('active');
+  document.getElementById('mobile-issues-btn').classList.remove('active');
+  document.getElementById('mobile-race-btn').classList.remove('active');
+}
+
 // ── Per-race state (saved when switching races) ────────────────────────────
 const raceStates = {};
 
@@ -95,6 +149,9 @@ function renderRaceTabs() {
       </button>`;
   }).join('');
   document.getElementById('race-tabs').innerHTML = html;
+
+  const raceBtn = document.getElementById('mobile-race-btn');
+  if (raceBtn) raceBtn.textContent = RACES[state.race].label;
 }
 
 // ── Context note ───────────────────────────────────────────────────────────
@@ -103,10 +160,15 @@ function renderContextNote() {
   const note = getRace().contextNote;
   const el = document.getElementById('context-note');
   if (note) {
-    el.textContent = note;
+    const isDesktop = window.innerWidth > 768;
+    el.innerHTML = `
+      <details class="context-note-details"${isDesktop ? ' open' : ''}>
+        <summary class="context-note-summary">About this race</summary>
+        <span class="context-note-body">${escapeHtml(note)}</span>
+      </details>`;
     el.classList.remove('hidden');
   } else {
-    el.textContent = '';
+    el.innerHTML = '';
     el.classList.add('hidden');
   }
 }
@@ -184,8 +246,8 @@ function renderMatrix() {
   const issues = getSelectedIssues();
   const container = document.getElementById('matrix-container');
 
-  if (candidates.length < 2) {
-    container.innerHTML = `<p class="matrix-empty">Select at least 2 candidates to compare.</p>`;
+  if (candidates.length < 1) {
+    container.innerHTML = `<p class="matrix-empty">Select at least 1 candidate to view positions.</p>`;
     return;
   }
   if (issues.length === 0) {
@@ -554,6 +616,7 @@ function handleRaceSwitch(raceId) {
   saveRaceState(state.race);
   state.race = raceId;
   restoreRaceState(raceId);
+  closeMobileSheet();
   renderAll();
   syncUrl();
 }
@@ -651,6 +714,7 @@ function bindEvents() {
     }
     const cell = e.target.closest('.position-cell');
     if (cell && !cell.classList.contains('no-data')) {
+      if (window.getSelection().toString().length > 0) return;
       handleCellClick(cell.dataset.issue, cell.dataset.candidate);
     }
   });
@@ -735,8 +799,21 @@ function bindEvents() {
     }
   });
 
+  // Mobile sheet
+  document.getElementById('mobile-race-btn').addEventListener('click', () => {
+    mobileSheetTarget === 'race' ? closeMobileSheet() : openMobileSheet('race');
+  });
+  document.getElementById('mobile-candidates-btn').addEventListener('click', () => {
+    mobileSheetTarget === 'candidates' ? closeMobileSheet() : openMobileSheet('candidates');
+  });
+  document.getElementById('mobile-issues-btn').addEventListener('click', () => {
+    mobileSheetTarget === 'issues' ? closeMobileSheet() : openMobileSheet('issues');
+  });
+  document.getElementById('mobile-sheet-close').addEventListener('click', closeMobileSheet);
+  document.querySelector('.mobile-sheet-backdrop').addEventListener('click', closeMobileSheet);
+
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { dismissPopover(); dismissScoreCardPopup(); dismissLongPopup(); }
+    if (e.key === 'Escape') { dismissPopover(); dismissScoreCardPopup(); dismissLongPopup(); closeMobileSheet(); }
   });
 }
 

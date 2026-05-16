@@ -27,7 +27,24 @@
   <div class="race-strip">
     <div class="race-strip-inner">
       <div id="race-tabs" class="race-tabs"></div>
-      <span class="race-switch-note">Switching races will reset your selections.</span>
+      <span class="race-switch-note">Selections are preserved when switching races,<br>but not when refreshing the page.</span>
+    </div>
+  </div>
+
+  <div id="mobile-filter-bar" class="mobile-filter-bar">
+    <button id="mobile-race-btn" class="mobile-filter-btn">Race</button>
+    <button id="mobile-candidates-btn" class="mobile-filter-btn">Candidates</button>
+    <button id="mobile-issues-btn" class="mobile-filter-btn">Issues</button>
+  </div>
+
+  <div id="mobile-sheet" class="mobile-sheet hidden">
+    <div class="mobile-sheet-backdrop"></div>
+    <div class="mobile-sheet-panel">
+      <div class="mobile-sheet-header">
+        <span id="mobile-sheet-title" class="mobile-sheet-title"></span>
+        <button id="mobile-sheet-close" class="mobile-sheet-close" aria-label="Close">✕</button>
+      </div>
+      <div id="mobile-sheet-content" class="mobile-sheet-content"></div>
     </div>
   </div>
 
